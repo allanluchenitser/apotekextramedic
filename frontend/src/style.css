@@ -1,3 +1,10 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Google+Sans:opsz@17..18&display=swap');
+
+:root {
+  --font-main: "Google Sans", sans-serif;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -10,6 +17,57 @@ body,
 }
 
 body {
+  font-family: var(--font-main);
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+  font-variation-settings: "GRAD" 0;
+
   background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   color: #111827;
+}
+
+/* --- basic tailwind style utility classes --- */
+.text-center {
+  text-align: center;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-col {
+  flex-direction: column;
+}
+
+.flex-row {
+  flex-direction: row;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.justify-center {
+  justify-content: center;
+}
+
+.w-full {
+  width: 100%;
+}
+
+.m-auto {
+  margin: 0 auto;
+}
+
+.gap-2 {
+  gap: 0.5rem !important;
+}
+
+.gap-4 {
+  gap: 1rem !important;
+}
+
+.pt-0 {
+  padding-top: 0 !important;
 }
