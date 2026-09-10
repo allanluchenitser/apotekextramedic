@@ -18,6 +18,7 @@ interface SideBarProps {
   class?: string,
   src?: string
 }
+
 const props  = defineProps<SideBarProps>()
 
 </script>

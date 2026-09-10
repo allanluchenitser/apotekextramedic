@@ -53,7 +53,7 @@ import { Clock, Phone } from '@lucide/vue';
         </div>
 
         <div class="info-list">
-          <div class="info-item flex-col gap-2 pt-0">
+          <div class="info-item pt-0">
             <div class="info-icon clock"> <Clock /></div>
             <div class="hours-list">
               <div class="hours-row"><span>Sunday</span><span>8:00 am–8:00 pm</span></div>
@@ -78,48 +78,6 @@ import { Clock, Phone } from '@lucide/vue';
             <div class="info-copy">
               <div class="info-main">Identifies as women-owned</div>
             </div>
-          </div>
-        </div>
-
-        <div class="section-header gallery-header">
-          <h2>Photos &amp; videos</h2>
-        </div>
-
-        <div class="gallery">
-          <div class="photo-card photo-one">
-            <span>All</span>
-          </div>
-          <div class="photo-card photo-two">
-            <span>By owner</span>
-          </div>
-          <div class="photo-card photo-three">
-            <span>Street View<br />&amp; 360°</span>
-          </div>
-        </div>
-
-        <button class="add-photo-button">
-          <span>＋</span>
-          Add photos &amp; videos
-        </button>
-
-        <div class="section-header summary-header">
-          <h2>Review summary</h2>
-          <span class="help">?</span>
-        </div>
-
-        <div class="summary-row">
-          <div class="bars">
-            <div class="bar-row"><span>5</span><div class="bar fill"></div></div>
-            <div class="bar-row"><span>4</span><div class="bar"></div></div>
-            <div class="bar-row"><span>3</span><div class="bar"></div></div>
-            <div class="bar-row"><span>2</span><div class="bar"></div></div>
-            <div class="bar-row"><span>1</span><div class="bar"></div></div>
-          </div>
-
-          <div class="summary-score-wrap">
-            <div class="summary-score">5.0</div>
-            <div class="summary-stars">★★★★★</div>
-            <div class="summary-count">26 reviews</div>
           </div>
         </div>
       </div>

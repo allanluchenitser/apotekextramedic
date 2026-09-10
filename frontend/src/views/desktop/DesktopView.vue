@@ -1,12 +1,22 @@
+<!-- @strictTemplates false -->
+
 <script setup lang="ts">
 import DesktopSideBar from './DesktopSideBar.vue'
+import { TresCanvas } from '@tresjs/core'
+
+import TheExperience from '@/components/TheExperience.vue'
+
 </script>
 
 <template>
   <div class="desktop-view">
     <DesktopSideBar side="left" />
     <div class="main-content">
-      <img src="@/assets/storefront_prototype.webp" alt="Storefront Prototype" />
+      <TresCanvas
+        clear-color="#82DBC5"
+      >
+        <TheExperience />
+      </TresCanvas>
     </div>
   </div>
 </template>
@@ -14,17 +24,19 @@ import DesktopSideBar from './DesktopSideBar.vue'
 <style scoped>
 .desktop-view {
   height: 100vh;
-  width: 100vw;
+  width: 100%;
 
   .main-content {
     flex: 1;
-    width: calc(100vw - var(--sidebar-width));
+    width: 100%;
+    padding-left: var(--sidebar-width);
+    height: 100vh;
 
     img {
-      height: 100%;
-      max-height: 100%;
       object-fit: cover;
       object-position: center;
+      height: 100%;
+      max-width: 100%;
     }
   }
 }

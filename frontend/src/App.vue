@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import DesktopView from './views/DesktopView.vue'
-  </script>
+import DesktopView from '@/views/desktop/DesktopView.vue'
+</script>
 
 <template>
   <main class="app">
