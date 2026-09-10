@@ -2,9 +2,8 @@
 
 <script setup lang="ts">
 import DesktopSideBar from './DesktopSideBar.vue'
+import Tutorial from '@/components/Tutorial.vue'
 import { TresCanvas } from '@tresjs/core'
-
-import TheExperience from '@/components/TheExperience.vue'
 
 </script>
 
@@ -13,9 +12,9 @@ import TheExperience from '@/components/TheExperience.vue'
     <DesktopSideBar side="left" />
     <div class="main-content">
       <TresCanvas
-        clear-color="#82DBC5"
+        clear-color="black"
       >
-        <TheExperience />
+        <Tutorial />
       </TresCanvas>
     </div>
   </div>
@@ -31,13 +30,6 @@ import TheExperience from '@/components/TheExperience.vue'
     width: 100%;
     padding-left: var(--sidebar-width);
     height: 100vh;
-
-    img {
-      object-fit: cover;
-      object-position: center;
-      height: 100%;
-      max-width: 100%;
-    }
   }
 }
 </style>

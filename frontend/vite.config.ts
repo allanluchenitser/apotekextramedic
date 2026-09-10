@@ -26,7 +26,8 @@ export default defineConfig({
     exclude: ['vue', 'three'],
   },
   resolve: {
-  alias: {
-    '@': fileURLToPath(new URL('./src', import.meta.url)),
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
   },
-},})
+})

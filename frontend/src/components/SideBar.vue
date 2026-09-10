@@ -1,3 +1,15 @@
+<script setup lang="ts">
+
+interface SideBarProps {
+  side: 'left' | 'right',
+  class?: string,
+  src?: string
+}
+
+const props = defineProps<SideBarProps>()
+
+</script>
+
 <template>
   <div :class="['page-shell', props.class]">
     <aside class="sidebar">
@@ -10,18 +22,6 @@
     </aside>
   </div>
 </template>
-
-<script setup lang="ts">
-
-interface SideBarProps {
-  side: 'left' | 'right',
-  class?: string,
-  src?: string
-}
-
-const props  = defineProps<SideBarProps>()
-
-</script>
 
 <style scoped>
 .page-shell {
@@ -53,5 +53,4 @@ const props  = defineProps<SideBarProps>()
     }
   }
 }
-
 </style>

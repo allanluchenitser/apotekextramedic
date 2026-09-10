@@ -11,5 +11,10 @@ export default tresLintConfig({
     'style/semi': 'off',
     'format/prettier': 'off',
     'jsonc/sort-keys': 'off',
+    'antfu/consistent-list-newline': 'off',
+    'perfectionist/sort-named-imports': 'off',
+    'style/member-delimiter-style': 'off',
+    'vue/prefer-separate-static-class': 'off',
+    'vue/html-self-closing': 'off',
   },
 })
