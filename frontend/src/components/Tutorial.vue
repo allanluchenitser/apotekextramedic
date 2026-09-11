@@ -1,12 +1,17 @@
 <script setup lang="ts">
-import { type TresObject, useLoop } from '@tresjs/core'
+import {
+  type TresObject,
+  useLoop,
+} from '@tresjs/core'
+
+import { toRainbow } from '@/js/util'
 
 import { OrbitControls } from '@tresjs/cientos'
 
 import { Vector3 } from 'three'
 import { shallowRef } from 'vue'
 
-const cameraPosition = new Vector3(7, 7, 7);
+const cameraPosition = new Vector3(0, 0, 30);
 const targetPosition = new Vector3(0, 0, 0);
 const meshPosition = new Vector3(0, 2, 0);
 const lightPosition = new Vector3(0, 2, 4);
@@ -18,10 +23,10 @@ const NUMBER_OF_TORUSES = 5
 const torusRefs = shallowRef<TresObject[]>([])
 
 // onBeforeRender(({ elapsed }) => {
-//   if (torusRef.value.length > 0) {
-//     torusRef.value.forEach(torus => {
-//       torus.rotation.y = elapsed
-//       // torus.rotation.z = elapsed
+//   if (torusRefs.value.length > 0) {
+//     torusRefs.value.forEach((torus) => {
+//       // torus.rotation.y = elapsed
+//       torus.rotation.z = elapsed
 //     })
 //   }
 // })
@@ -39,15 +44,13 @@ const torusRefs = shallowRef<TresObject[]>([])
   />
 
   <TresMesh
-    v-for="
-      (val, index) in Array.from({ length: NUMBER_OF_TORUSES }, (_, i) => i)
-    "
-    :ref="torusRefs"
+    v-for="(val, index) in NUMBER_OF_TORUSES"
+    ref="torusRefs"
     :key="index"
     :position="meshPosition"
   >
-    <TresTorusGeometry :args="[2 * val, .1 * val, 10, 25]" />
-    <TresMeshBasicMaterial color="yellow" />
+    <TresTorusGeometry :args="[2 * val, .5, 10, 25, Math.PI]" />
+    <TresMeshBasicMaterial :color="toRainbow(index, NUMBER_OF_TORUSES)" />
   </TresMesh>
 
   <TresDirectionalLight
