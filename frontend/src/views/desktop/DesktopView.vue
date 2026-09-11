@@ -1,22 +1,36 @@
 <!-- @strictTemplates false -->
 
 <script setup lang="ts">
+import { ref } from 'vue'
+import ControlSideBar from './ControlSideBar.vue'
 import DesktopSideBar from './DesktopSideBar.vue'
 import Tutorial from '@/components/Tutorial.vue'
 import { TresCanvas } from '@tresjs/core'
+
+const numberOfTorus = ref(1);
+const torusRadius = ref(1);
+const torusTube = ref(0.5);
 
 </script>
 
 <template>
   <div class="desktop-view">
-    <DesktopSideBar side="left" />
+    <DesktopSideBar width="var(--left-sidebar-width)" side="left" />
     <div class="main-content">
       <TresCanvas
         clear-color="black"
       >
-        <Tutorial />
+        <Tutorial
+          :number-of-torus="numberOfTorus"
+        />
       </TresCanvas>
     </div>
+    <ControlSideBar
+      side="right"
+      width="var(--right-sidebar-width)"
+      :number-of-torus="numberOfTorus"
+      @select="numberOfTorus = $event"
+    />
   </div>
 </template>
 
@@ -28,7 +42,8 @@ import { TresCanvas } from '@tresjs/core'
   .main-content {
     flex: 1;
     width: 100%;
-    padding-left: var(--sidebar-width);
+    padding-left: var(--left-sidebar-width);
+    padding-right: var(--right-sidebar-width);
     height: 100vh;
   }
 }

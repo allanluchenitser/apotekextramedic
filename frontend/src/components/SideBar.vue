@@ -3,7 +3,8 @@
 interface SideBarProps {
   side: 'left' | 'right',
   class?: string,
-  src?: string
+  src?: string,
+  width: string,
 }
 
 const props = defineProps<SideBarProps>()
@@ -11,7 +12,7 @@ const props = defineProps<SideBarProps>()
 </script>
 
 <template>
-  <div :class="['page-shell', props.class]">
+  <div :class="['page-shell', props.class, props.side]" :style="{ width: props.width }">
     <aside class="sidebar">
       <div class="sidebar-content">
         <header v-if="props.src">
@@ -25,14 +26,21 @@ const props = defineProps<SideBarProps>()
 
 <style scoped>
 .page-shell {
+  box-sizing: border-box;
+
   background: #dfe6ec;
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  box-sizing: border-box;
-  left: 0;
+
   position: fixed;
-  width: var(--sidebar-width);
+
+  top: 0;
+  left: 0;
+  &.right {
+    left: auto;
+    right: 0;
+  }
 
   @media (max-width: 520px) {
     padding: 0;

@@ -10,11 +10,13 @@ export default tresLintConfig({
     'antfu/if-newline': 'off',
     'antfu/consistent-list-newline': 'off',
 
-    'style/semi': 'off',
     'format/prettier': 'off',
     'jsonc/sort-keys': 'off',
     'perfectionist/sort-named-imports': 'off',
 
+    'ts/consistent-type-definitions': 'off',
+
+    'style/semi': 'off',
     'style/max-statements-per-line': 'off',
     'style/member-delimiter-style': 'off',
     'style/no-tabs': 'off',
@@ -24,6 +26,7 @@ export default tresLintConfig({
     'style/arrow-parens': 'off',
     'style/eol-last': 'off',
     'style/no-trailing-spaces': 'off',
+    'style/comma-dangle': 'off',
 
     'vue/block-tag-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',

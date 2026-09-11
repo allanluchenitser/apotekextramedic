@@ -10,6 +10,7 @@ import DesktopView from '@/views/desktop/DesktopView.vue'
 
 <style>
 :root {
-  --sidebar-width: 325px;
+  --left-sidebar-width: 325px;
+  --right-sidebar-width: 325px;
 }
 </style>
