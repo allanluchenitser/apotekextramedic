@@ -1,30 +1,32 @@
 <!-- @strictTemplates false -->
 
 <script setup lang="ts">
-import ControlSideBar from '@/components/ControlSideBar.vue'
-import GoogleSideBar from '@/components/GoogleSideBar.vue'
+import { ref } from 'vue'
+import { Vector3 } from 'three'
 
+import GoogleSideBar from '@/components/GoogleSideBar.vue'
 import ApotekScene from '@/scenes/ApotekScene.vue'
+import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
 
+const position = ref(new Vector3(0, 0, 0));
 </script>
 
 <template>
   <div class="apotek-view">
     <GoogleSideBar width="var(--left-sidebar-width)" side="left" />
     <div class="main-content">
-      <TresCanvas
-        alpha
-        :clear-alpha="0"
-      >
-        <ApotekScene />
-      </TresCanvas>
+      <div class="main-content-wrapper">
+        <TresCanvas
+          alpha
+          :clear-alpha="0"
+        >
+          <ApotekScene @position="position = $event" />
+        </TresCanvas>
+        <DisplayCoordinates :position="position"/>
+      </div>
     </div>
-    <!-- <ControlSideBar
-      side="right"
-      width="var(--right-sidebar-width)"
-    /> -->
   </div>
 </template>
 
@@ -39,6 +41,11 @@ import { TresCanvas } from '@tresjs/core'
     width: 100%;
     padding-left: var(--left-sidebar-width);
     height: 100vh;
+
+    .main-content-wrapper {
+      height: 100%;
+      position: relative;
+    }
   }
 }
 </style>

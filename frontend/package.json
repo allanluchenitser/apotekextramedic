@@ -13,10 +13,12 @@
   },
   "dependencies": {
     "@lucide/vue": "^1.37.0",
+    "@tailwindcss/vite": "^4.3.3",
     "@tresjs/cientos": "latest",
     "@tresjs/core": "latest",
     "@tresjs/leches": "latest",
     "@tresjs/post-processing": "latest",
+    "tailwindcss": "^4.3.3",
     "three": "latest",
     "three-stdlib": "latest",
     "vue": "latest"

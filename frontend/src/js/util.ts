@@ -30,3 +30,7 @@ export function toRainbow(value: number, max: number, offset = 0): string {
 		.map((channel) => Math.round(channel * 255).toString(16).padStart(2, "0"))
 		.join("")}`;
 }
+
+export function toFixed(value: number, digits: number): number {
+	return Number(value.toFixed(digits));
+}
