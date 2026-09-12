@@ -1,10 +1,11 @@
 <script setup lang="ts">
 import SideBar from '@/components/SideBar.vue'
-import headerImg from '@/assets/apotek-sidebar-header.webp'
+import headerImg from '@/assets/img/apotek-sidebar-header.webp'
 import { Clock, Phone } from '@lucide/vue';
 
 type Props = {
-  side: 'left' | 'right'
+  side: 'left' | 'right',
+  width: string,
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -13,7 +14,7 @@ const props = withDefaults(defineProps<Props>(), {
 </script>
 
 <template>
-  <SideBar :side="props.side" class="desktop-sidebar" :src="headerImg">
+  <SideBar :side="props.side" :width="props.width" class="desktop-sidebar" :src="headerImg">
     <div class="place-card">
       <div class="content-wrap">
         <h1>

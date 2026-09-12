@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import DesktopView from '@/views/desktop/DesktopView.vue'
+// import PracticeView from '@/views/PracticeView.vue'
+import ApotekView from '@/views/ApotekView.vue'
 </script>
 
 <template>
   <main class="app">
-    <DesktopView />
+    <ApotekView />
   </main>
 </template>
 

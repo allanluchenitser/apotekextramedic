@@ -2,25 +2,23 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import ControlSideBar from './ControlSideBar.vue'
-import DesktopSideBar from './DesktopSideBar.vue'
-import Tutorial from '@/components/Tutorial.vue'
+import ControlSideBar from '@/components/ControlSideBar.vue'
+import DesktopSideBar from '@/components/GoogleSideBar.vue'
+import PracticeScene from '@/scenes/PracticeScene.vue'
 import { TresCanvas } from '@tresjs/core'
 
 const numberOfTorus = ref(1);
-const torusRadius = ref(1);
-const torusTube = ref(0.5);
 
 </script>
 
 <template>
-  <div class="desktop-view">
+  <div class="practice-view">
     <DesktopSideBar width="var(--left-sidebar-width)" side="left" />
     <div class="main-content">
       <TresCanvas
         clear-color="black"
       >
-        <Tutorial
+        <PracticeScene
           :number-of-torus="numberOfTorus"
         />
       </TresCanvas>
@@ -35,7 +33,7 @@ const torusTube = ref(0.5);
 </template>
 
 <style scoped>
-.desktop-view {
+.practice-view {
   height: 100vh;
   width: 100%;
 

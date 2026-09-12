@@ -3,7 +3,7 @@ import SideBar from '@/components/SideBar.vue'
 
 const props = defineProps<{
   width: string
-  numberOfTorus: number
+  numberOfTorus?: number
 }>()
 
 const emit = defineEmits<{
