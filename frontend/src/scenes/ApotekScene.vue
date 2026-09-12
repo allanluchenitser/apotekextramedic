@@ -1,28 +1,31 @@
 <script setup lang="ts">
+import { nextTick, onMounted, ref, watch } from 'vue'
 
 import apotekGlbUrl from '@/assets/glb/apotekScene.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
-
 import { Vector3 } from 'three'
 
 import { toFixed } from '@/js/util'
 
+
 const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
+
+const controls = ref<any>(null)
 
 const {
   state: apotekState,
   nodes: apotekNodes,
-  materials: apotekMaterials
+  materials: apotekMaterials,
+  isLoading,
 } = useGLTF(apotekGlbUrl)
-
 
 // Initial camera position
 // X: -10.74, Y: 5.24, Z: 23.37
-const initialCameraPosition = new Vector3(-7.74, 8.24, 22.68);
-const initialLookAtPosition = new Vector3(0, 0, 0);
+const initialCameraPosition = new Vector3(-3.43, 9.43, 26.8);
+const initialLookAtPosition = new Vector3(0, 5, 0);
 
 const emit = defineEmits<{
   position: [position: Vector3]
@@ -40,12 +43,26 @@ onBeforeRender(() => {
   emit('position', new Vector3(x, y, z));
 });
 
+onMounted(async () => {
+  await nextTick();
+  controls.value?.instance.update();
+})
+
+watch(isLoading, (loading) => {
+  if (loading) return;
+
+  if (!apotekState) return
+
+  apotekState.value?.scene.traverse((obj) => {
+    console.log(obj.name, obj.type, obj)
+  })
+})
+
 </script>
 
 <template>
   <TresPerspectiveCamera
     :position="initialCameraPosition"
-    :look-at="initialLookAtPosition"
   />
 
   <TresAmbientLight
@@ -66,7 +83,10 @@ onBeforeRender(() => {
 
   <TresAxesHelper />
   <TresGridHelper :args="[10, 10]" />
+
   <OrbitControls
+    ref="controls"
     :enableDamping="false"
+    :target="initialLookAtPosition"
   />
 </template>

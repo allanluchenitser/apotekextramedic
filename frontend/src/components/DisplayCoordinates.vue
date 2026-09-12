@@ -10,9 +10,12 @@ defineProps<{ position: Vector3 }>()
   displayCoordinates
   absolute bottom-0 left-1/2 transform -translate-x-1/2
   p-2
-  bg-white border
-  border-gray-300
+  bg-white
+  flex
+  gap-3
 ">
-  X: {{ toFixed(position.x, 2) }}, Y: {{ toFixed(position.y, 2) }}, Z: {{ toFixed(position.z, 2) }}
+    <span>{{ toFixed(position.x, 2) }}</span>
+    <span>{{ toFixed(position.y, 2) }}</span>
+    <span>{{ toFixed(position.z, 2) }}</span>
 </div>
 </template>
