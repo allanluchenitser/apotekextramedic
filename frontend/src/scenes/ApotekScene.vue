@@ -1,36 +1,29 @@
 <script setup lang="ts">
 import { nextTick, onMounted, ref, watch, computed } from 'vue'
 
-import apotekGlbUrl from '@/assets/glb/apotekScene.glb?url'
+import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
 import { Vector3, Mesh, MeshStandardMaterial, Color } from 'three'
 
-import { toFixed } from '@/js/util'
+import { toFixed, tresObjectInfo } from '@/js/util'
 
 // ------ SETUP ------
-
-const { camera } = useTresContext();
-const { onBeforeRender } = useLoop();
-
-const controls = ref<any>(null)
-
-const {
-  state: apotekState,
-  nodes: apotekNodes,
-  isLoading,
-} = useGLTF(apotekGlbUrl)
-
-const originalColors = new WeakMap<Mesh, Color>()
-
-// Initial camera position
-const initialCameraPosition = new Vector3(-3.43, 9.43, 26.8);
-const initialLookAtPosition = new Vector3(0, 5, 0);
 
 const emit = defineEmits<{
   position: [position: Vector3]
 }>();
+
+const { camera } = useTresContext();
+const { onBeforeRender } = useLoop();
+const { state: apotekState, nodes: apotekNodes, isLoading } = useGLTF(apotekGlbUrl)
+
+const controls = ref<any>(null)
+const originalColors = new WeakMap<Mesh, Color>()
+
+const initialCameraPosition = new Vector3(-3.43, 9.43, 26.8);
+const initialLookAtPosition = new Vector3(0, 5, 0);
 
 // ------ FUNCTIONS
 
@@ -38,10 +31,10 @@ function handlePointerEnter(event: any) {
   const object = event.object as Mesh
   const material = object.material as MeshStandardMaterial
 
-  console.log('object:', object)
-
   originalColors.set(object, material.color.clone())
   material.color.set('red')
+
+  tresObjectInfo(object)
 }
 
 function handlePointerLeave(event: any) {
@@ -50,7 +43,6 @@ function handlePointerLeave(event: any) {
 
   material.color.copy(originalColors.get(object)!)
 }
-
 
 // ------ LIFECYCLE & WATCHERS
 
@@ -69,23 +61,40 @@ onBeforeRender(() => {
 onMounted(async () => {
   await nextTick();
   controls.value?.instance.update();
+
+  const worldPosition = new Vector3()
+  apotekState.value?.scene.getWorldPosition(worldPosition)
+  console.log('world position:', worldPosition.toArray().join(', '))
+
 })
 
-const interactiveMeshes = computed(() =>
-  Object.values(apotekNodes.value).filter(
+const interactiveMeshes = computed(() => {
+  const meshes = Object.values(apotekNodes.value).filter(
     object => object instanceof Mesh
   )
-)
+
+  console.log(meshes.map(mesh => { return `${mesh.name}, ${mesh.parent?.name}` }))
+
+  return meshes
+})
 
 watch(isLoading, (loading) => {
   if (loading) return;
 
   apotekState.value?.scene.traverse((obj) => {
+
+    // make each object have its own material
     if (obj instanceof Mesh) {
       if (Array.isArray(obj.material)) {
         obj.material = obj.material.map((mat) => mat.clone())
+
+        console.log('material array:')
+        for (const mat of obj.material) {
+          tresObjectInfo({ material: mat } as Mesh)
+        }
       } else {
         obj.material = obj.material.clone()
+        tresObjectInfo(obj)
       }
     }
   })
@@ -98,33 +107,34 @@ watch(isLoading, (loading) => {
   />
 
   <TresAmbientLight
-    :intensity="0.5"
+    :intensity=".1"
     color="white"
   />
-
   <TresPointLight
-    :position="new Vector3(0, 1, 0)"
+    :position="new Vector3(5, 1, 10)"
     :intensity="100"
   />
-
+<!--
   <primitive
     v-for="mesh in interactiveMeshes"
     :key="mesh.uuid"
     :object="mesh"
     @pointerenter="handlePointerEnter"
     @pointerleave="handlePointerLeave"
-  />
+  />  -->
+
+  <primitive v-if="!isLoading" :object="apotekState?.scene" />
 
   <TresDirectionalLight
-    :position="new Vector3(0, 10, 10)"
+    :position="new Vector3(0, 2, 5)"
     :lookAt="initialLookAtPosition"
     :intensity="1"
   />
-  <TresDirectionalLight
+  <!-- <TresDirectionalLight
     :position="new Vector3(0, 10, 10)"
     :lookAt="initialLookAtPosition"
     :intensity="1"
-  />
+  /> -->
 
   <TresAxesHelper />
   <TresGridHelper :args="[10, 10]" />
