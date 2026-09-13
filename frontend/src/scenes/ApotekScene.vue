@@ -20,9 +20,9 @@ const { onBeforeRender } = useLoop();
 const { state: apotekState, nodes: apotekNodes, isLoading } = useGLTF(apotekGlbUrl)
 
 const controls = ref<any>(null)
-const originalColors = new WeakMap<Mesh, Color>()
+// const originalColors = new WeakMap<Mesh, Color>()
 
-const initialCameraPosition = new Vector3(-3.43, 9.43, 26.8);
+const initialCameraPosition = new Vector3(-7.26, 5.09, 15.05);
 const initialLookAtPosition = new Vector3(0, 5, 0);
 
 // ------ FUNCTIONS
@@ -65,18 +65,17 @@ onMounted(async () => {
   const worldPosition = new Vector3()
   apotekState.value?.scene.getWorldPosition(worldPosition)
   console.log('world position:', worldPosition.toArray().join(', '))
-
 })
 
-const interactiveMeshes = computed(() => {
-  const meshes = Object.values(apotekNodes.value).filter(
-    object => object instanceof Mesh
-  )
+// const interactiveMeshes = computed(() => {
+//   const meshes = Object.values(apotekNodes.value).filter(
+//     object => object instanceof Mesh
+//   )
 
-  console.log(meshes.map(mesh => { return `${mesh.name}, ${mesh.parent?.name}` }))
+//   console.log(meshes.map(mesh => { return `${mesh.name}, ${mesh.parent?.name}` }))
 
-  return meshes
-})
+//   return meshes
+// })
 
 watch(isLoading, (loading) => {
   if (loading) return;
