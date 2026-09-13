@@ -5,7 +5,7 @@ import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
-import { Vector3, Mesh, MeshStandardMaterial, Color } from 'three'
+import { Vector3, Mesh, MeshStandardMaterial, type Color } from 'three'
 
 import { toFixed, tresObjectInfo } from '@/js/util'
 
@@ -27,22 +27,22 @@ const initialLookAtPosition = new Vector3(0, 5, 0);
 
 // ------ FUNCTIONS
 
-function handlePointerEnter(event: any) {
-  const object = event.object as Mesh
-  const material = object.material as MeshStandardMaterial
+// function handlePointerEnter(event: any) {
+//   const object = event.object as Mesh
+//   const material = object.material as MeshStandardMaterial
 
-  originalColors.set(object, material.color.clone())
-  material.color.set('red')
+//   originalColors.set(object, material.color.clone())
+//   material.color.set('red')
 
-  tresObjectInfo(object)
-}
+//   tresObjectInfo(object)
+// }
 
-function handlePointerLeave(event: any) {
-  const object = event.object as Mesh
-  const material = object.material as MeshStandardMaterial
+// function handlePointerLeave(event: any) {
+//   const object = event.object as Mesh
+//   const material = object.material as MeshStandardMaterial
 
-  material.color.copy(originalColors.get(object)!)
-}
+//   material.color.copy(originalColors.get(object)!)
+// }
 
 // ------ LIFECYCLE & WATCHERS
 
@@ -82,7 +82,6 @@ watch(isLoading, (loading) => {
   if (loading) return;
 
   apotekState.value?.scene.traverse((obj) => {
-
     // make each object have its own material
     if (obj instanceof Mesh) {
       if (Array.isArray(obj.material)) {
@@ -92,7 +91,8 @@ watch(isLoading, (loading) => {
         for (const mat of obj.material) {
           tresObjectInfo({ material: mat } as Mesh)
         }
-      } else {
+      }
+      else {
         obj.material = obj.material.clone()
         tresObjectInfo(obj)
       }

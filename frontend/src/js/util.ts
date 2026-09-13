@@ -1,4 +1,4 @@
-import { Mesh, MeshStandardMaterial } from "node_modules/@types/three/build/three.cjs";
+import type { Mesh } from "node_modules/@types/three/build/three.cjs";
 
 /**
  * Converts a position within a range to a saturated rainbow CSS hex colour.
@@ -40,7 +40,5 @@ export function toFixed(value: number, digits: number): number {
 export function tresObjectInfo(object: Mesh) {
 	console.dir(object);
   // const material = object.material as MeshStandardMaterial;
-
-
   // console.log(`object ${object.name} location ${object.position.toArray().join(', ')} rotation ${object.rotation.toArray().join(', ')} material: ${material.name} color ${material.color.getHex()} rough ${material.roughness} metal ${material.metalness} `)
 }
