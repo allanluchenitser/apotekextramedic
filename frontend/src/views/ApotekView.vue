@@ -10,7 +10,11 @@ import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
 
-const position = ref(new Vector3(0, 0, 0));
+const position = ref({
+  position: new Vector3(0, 0, 0),
+  euler: new Vector3(0, 0, 0)
+});
+
 </script>
 
 <template>
@@ -24,7 +28,7 @@ const position = ref(new Vector3(0, 0, 0));
         >
           <ApotekScene @position="position = $event" />
         </TresCanvas>
-        <DisplayCoordinates :position="position"/>
+        <DisplayCoordinates :position="position" />
       </div>
     </div>
   </div>

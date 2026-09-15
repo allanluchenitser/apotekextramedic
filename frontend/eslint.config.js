@@ -7,6 +7,7 @@ export default tresLintConfig({
     'curly': 'off',
     'eol-last': 'off',
     'no-console': 'off',
+    'no-useless-return': 'off',
 
     'antfu/if-newline': 'off',
     'antfu/consistent-list-newline': 'off',

@@ -5,25 +5,30 @@ import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
-import { Vector3, Mesh, MeshStandardMaterial, type Color } from 'three'
+import { Vector3, Mesh, } from 'three'
 
 import { toFixed, tresObjectInfo } from '@/js/util'
 
 // ------ SETUP ------
 
 const emit = defineEmits<{
-  position: [position: Vector3]
+  position: [{ position: Vector3, euler: Vector3 }],
 }>();
+
+const {
+  state: apotekState,
+  // nodes: apotekNodes,
+  isLoading
+} = useGLTF(apotekGlbUrl);
 
 const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
-const { state: apotekState, nodes: apotekNodes, isLoading } = useGLTF(apotekGlbUrl)
 
 const controls = ref<any>(null)
 // const originalColors = new WeakMap<Mesh, Color>()
 
-const initialCameraPosition = new Vector3(-7.26, 5.09, 15.05);
-const initialLookAtPosition = new Vector3(0, 5, 0);
+const initialCameraPosition = new Vector3(0, 8, 15.05);
+const initialLookAtPosition = new Vector3(0, 0, 0);
 
 // ------ FUNCTIONS
 
@@ -47,15 +52,25 @@ const initialLookAtPosition = new Vector3(0, 5, 0);
 // ------ LIFECYCLE & WATCHERS
 
 onBeforeRender(() => {
-  const pos = camera.activeCamera.value?.position;
+  const cam = camera.activeCamera.value;
 
-  if (!pos) return;
+  const position = cam.position;
+  const euler = cam.getWorldDirection(new Vector3());
 
-  const x = toFixed(pos.x, 2)
-  const y = toFixed(pos.y, 2)
-  const z = toFixed(pos.z, 2)
+  if (!position) return;
 
-  emit('position', new Vector3(x, y, z));
+  const px = toFixed(position.x, 2)
+  const py = toFixed(position.y, 2)
+  const pz = toFixed(position.z, 2)
+
+  const ex = toFixed(euler.x, 2)
+  const ey = toFixed(euler.y, 2)
+  const ez = toFixed(euler.z, 2)
+
+  emit('position', {
+    position: new Vector3(px, py, pz),
+    euler: new Vector3(ex, ey, ez),
+  });
 });
 
 onMounted(async () => {
