@@ -12,6 +12,8 @@ export default tresLintConfig({
     'antfu/if-newline': 'off',
     'antfu/consistent-list-newline': 'off',
 
+    'unicorn/number-literal-case': 'off',
+
     'format/prettier': 'off',
     'jsonc/sort-keys': 'off',
     'perfectionist/sort-named-imports': 'off',
@@ -23,6 +25,7 @@ export default tresLintConfig({
     'style/member-delimiter-style': 'off',
     'style/no-tabs': 'off',
     'style/indent': 'off',
+    'style/space-in-parens': 'off',
 
     'style/quotes': 'off',
     'style/arrow-parens': 'off',
@@ -35,5 +38,6 @@ export default tresLintConfig({
     'vue/prefer-separate-static-class': 'off',
     'vue/html-indent': 'off',
     'vue/html-self-closing': 'off',
+    'vue/attributes-order': 'off'
   },
 })

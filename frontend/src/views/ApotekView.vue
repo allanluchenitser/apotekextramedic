@@ -3,6 +3,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { Vector3 } from 'three'
+import type { RotationDegrees } from '@/js/localTypes'
 
 import GoogleSideBar from '@/components/GoogleSideBar.vue'
 import ApotekScene from '@/scenes/ApotekScene.vue'
@@ -10,9 +11,12 @@ import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
 
-const position = ref({
+const position = ref<{
+  position: Vector3,
+  rotation: RotationDegrees
+}>({
   position: new Vector3(0, 0, 0),
-  euler: new Vector3(0, 0, 0)
+  rotation: { x: 0, y: 0, z: 0 }
 });
 
 </script>

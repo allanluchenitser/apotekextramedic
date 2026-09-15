@@ -6,12 +6,12 @@ import App from './App.vue'
 
 import ApotekView from './views/ApotekView.vue';
 import PracticeView from './views/PracticeView.vue';
-import ThreeView from './views/ThreeView.vue';
+import ThreeView from './views/threeview/ThreeView.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: '/', redirect: '/apotek'},
+    { path: '/', redirect: '/apotek' },
     { path: '/apotek', component: ApotekView },
     { path: '/practice', component: PracticeView },
     { path: '/three', component: ThreeView },

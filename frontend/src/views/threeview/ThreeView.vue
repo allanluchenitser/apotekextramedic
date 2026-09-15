@@ -1,28 +1,41 @@
 <script setup lang="ts">
-import { ref, onMounted, onBeforeMount, onBeforeUnmount } from 'vue';
+import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 import * as THREE from 'three';
+import type { RotationDegrees } from '@/js/localTypes';
+
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-const threeView = ref<HTMLDivElement| null>(null)
+import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
+
+const displayPosition = ref<{ position: THREE.Vector3, rotation: RotationDegrees }>({
+  position: new THREE.Vector3(0, 0, 0),
+  rotation: { x: 0, y: 0, z: 0 }
+})
+
+const threeView = ref<HTMLDivElement | null>(null)
 
 let renderer: THREE.WebGLRenderer
 let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
-let animationId: number
 
 onMounted(() => {
   if (!threeView.value) return
+
+  // ------ SETUP
 
   const width = threeView.value.clientWidth
   const height = threeView.value.clientHeight
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000)
+
+  camera.position.set(2, 2, 10);
+
   renderer = new THREE.WebGLRenderer({
-    antialias: true,
+    // antialias: true,
     alpha: true
   })
 
@@ -31,25 +44,49 @@ onMounted(() => {
 
   threeView.value.appendChild(renderer.domElement);
 
+  // ------ OBJECTS
+
   const geometry = new THREE.BoxGeometry( 1, 1, 1 );
-  const material = new THREE.MeshBasicMaterial( { color: 0x3a1af1 } );
+
+  const material = new THREE.MeshBasicMaterial({
+    color: 0x3a1af1
+  });
+
+  // const material = new THREE.MeshStandardMaterial({
+  //   color: 0x3a1af1
+  // });
 
   const cube = new THREE.Mesh( geometry, material );
 
   scene.add( cube );
 
-  camera.position.z = 5;
+  // ------ ANIMATION, CONTROLS
 
   controls = new OrbitControls( camera, renderer.domElement );
-  const loader = new GLTFLoader();
+  controls.target.set(0, 0, 0);
+  controls.update();
+  // const loader = new GLTFLoader();
 
-  function animate( time: number ) {
-    cube.rotation.x = time / 2000
-    cube.rotation.y = time / 1000
+  function animate() {
+    // cube.rotation.x = time / 4000
+    // cube.rotation.y = time / 2000
 
-    controls.update()
-    renderer.render(scene, camera)
-  }
+    controls.update();
+    renderer.render(scene, camera);
+
+    const pos = camera.position.clone();
+
+    const rot: RotationDegrees = {
+      x: THREE.MathUtils.radToDeg(camera.rotation.x),
+      y: THREE.MathUtils.radToDeg(camera.rotation.y),
+      z: THREE.MathUtils.radToDeg(camera.rotation.z)
+    };
+
+    displayPosition.value = {
+      position: pos,
+      rotation: rot
+    };
+  };
 
   renderer.setAnimationLoop( animate );
   window.addEventListener('resize', handleResize);
@@ -81,7 +118,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-<div class="three-view" ref="threeView"></div>
+<div class="three-view" ref="threeView">
+  <DisplayCoordinates :position="displayPosition" />
+</div>
 </template>
 
 <style>

@@ -5,19 +5,19 @@ import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
-import { Vector3, Mesh, } from 'three'
+import { Vector3, Mesh } from 'three'
 
-import { toFixed, tresObjectInfo } from '@/js/util'
+import { toFixedNumber, tresObjectInfo } from '@/js/util'
+import type { RotationDegrees } from '@/js/localTypes'
 
 // ------ SETUP ------
 
 const emit = defineEmits<{
-  position: [{ position: Vector3, euler: Vector3 }],
+  position: [{ position: Vector3, rotation: RotationDegrees }],
 }>();
 
 const {
   state: apotekState,
-  // nodes: apotekNodes,
   isLoading
 } = useGLTF(apotekGlbUrl);
 
@@ -25,29 +25,11 @@ const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
 
 const controls = ref<any>(null)
-// const originalColors = new WeakMap<Mesh, Color>()
 
 const initialCameraPosition = new Vector3(0, 8, 15.05);
 const initialLookAtPosition = new Vector3(0, 0, 0);
 
 // ------ FUNCTIONS
-
-// function handlePointerEnter(event: any) {
-//   const object = event.object as Mesh
-//   const material = object.material as MeshStandardMaterial
-
-//   originalColors.set(object, material.color.clone())
-//   material.color.set('red')
-
-//   tresObjectInfo(object)
-// }
-
-// function handlePointerLeave(event: any) {
-//   const object = event.object as Mesh
-//   const material = object.material as MeshStandardMaterial
-
-//   material.color.copy(originalColors.get(object)!)
-// }
 
 // ------ LIFECYCLE & WATCHERS
 
@@ -55,21 +37,24 @@ onBeforeRender(() => {
   const cam = camera.activeCamera.value;
 
   const position = cam.position;
-  const euler = cam.getWorldDirection(new Vector3());
+  const rotation = cam.rotation;
 
   if (!position) return;
 
-  const px = toFixed(position.x, 2)
-  const py = toFixed(position.y, 2)
-  const pz = toFixed(position.z, 2)
+  const px = toFixedNumber(position.x, 2)
+  const py = toFixedNumber(position.y, 2)
+  const pz = toFixedNumber(position.z, 2)
 
-  const ex = toFixed(euler.x, 2)
-  const ey = toFixed(euler.y, 2)
-  const ez = toFixed(euler.z, 2)
+  const ex = toFixedNumber(180 * rotation.x / Math.PI, 2)
+  const ey = toFixedNumber(180 * rotation.y / Math.PI, 2)
+  const ez = toFixedNumber(180 * rotation.z / Math.PI, 2)
+
+  const pos = new Vector3(px, py, pz);
+  const rot: RotationDegrees = { x: ex, y: ey, z: ez };
 
   emit('position', {
-    position: new Vector3(px, py, pz),
-    euler: new Vector3(ex, ey, ez),
+    position: pos,
+    rotation: rot
   });
 });
 

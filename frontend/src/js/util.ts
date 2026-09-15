@@ -33,7 +33,7 @@ export function toRainbow(value: number, max: number, offset = 0): string {
 		.join("")}`;
 }
 
-export function toFixed(value: number, digits: number): number {
+export function toFixedNumber(value: number, digits: number): number {
 	return Number(value.toFixed(digits));
 }
 

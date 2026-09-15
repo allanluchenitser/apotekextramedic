@@ -1,30 +1,24 @@
 <script setup lang="ts">
-import { shallowRef } from 'vue';
-
 import PracticeView from '@/views/PracticeView.vue'
 import ApotekView from '@/views/ApotekView.vue'
 import ThreeView from '@/views/ThreeView.vue'
-
-const views = {
-  ApotekView,
-  PracticeView,
-  ThreeView
-}
 
 </script>
 
 <template>
   <main class="app">
-    <nav class="
-      view-selection
-      absolute bottom-1 right-1
-      bg-white
-      flex
-      text-xs
-      p-2
-      [&>a]:hover:underline [&>a]:hover:cursor-pointer [&>a]:px-2
-      z-1
-    ">
+    <nav
+      class="
+        view-selection
+        absolute bottom-1 right-1
+        bg-white
+        flex
+        text-xs
+        p-2
+        [&>a]:hover:underline [&>a]:hover:cursor-pointer [&>a]:px-2
+        z-1
+      "
+    >
       <router-link to="/apotek">apotek</router-link>
       <router-link to="/three">three</router-link>
       <router-link to="/practice">practice</router-link>

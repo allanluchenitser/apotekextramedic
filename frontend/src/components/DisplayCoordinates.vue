@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Vector3 } from 'three';
-import { toFixed } from '@/js/util';
+import type { RotationDegrees } from '@/js/localTypes';
 
 defineProps<{
-  position: { position: Vector3, euler: Vector3 },
+  position: { position: Vector3, rotation: RotationDegrees },
 }>()
 </script>
 
@@ -16,14 +16,18 @@ defineProps<{
     bg-white
     flex
     gap-3
+    justify-center
+    font-mono
+    w-[400px]
+    text-sm
   "
 >
-    <span>{{ toFixed(position.position.x, 2) }}</span>
-    <span>{{ toFixed(position.position.y, 2) }}</span>
-    <span>{{ toFixed(position.position.z, 2) }}</span>
+    <span>{{ position.position.x.toFixed(2) }}</span>
+    <span>{{ position.position.y.toFixed(2) }}</span>
+    <span>{{ position.position.z.toFixed(2) }}</span>
     <span>➛</span>
-    <span>{{ toFixed(position.euler.x, 2) }}</span>
-    <span>{{ toFixed(position.euler.y, 2) }}</span>
-    <span>{{ toFixed(position.euler.z, 2) }}</span>
+    <span>{{ position.rotation.x.toFixed(2) }}</span>
+    <span>{{ position.rotation.y.toFixed(2) }}</span>
+    <span>{{ position.rotation.z.toFixed(2) }}</span>
 </div>
 </template>
