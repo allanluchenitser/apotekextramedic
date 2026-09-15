@@ -4,6 +4,8 @@ import { ref, onMounted, onBeforeUnmount } from 'vue';
 import * as THREE from 'three';
 import type { RotationDegrees } from '@/js/localTypes';
 
+import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
+
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
@@ -46,19 +48,24 @@ onMounted(() => {
 
   // ------ OBJECTS
 
-  const geometry = new THREE.BoxGeometry( 1, 1, 1 );
+  // const geometry = new THREE.BoxGeometry( 1, 1, 1 );
 
-  const material = new THREE.MeshBasicMaterial({
-    color: 0x3a1af1
-  });
+  // const material = new THREE.MeshBasicMaterial({
+  //   color: 0x3a1af1
+  // });
 
   // const material = new THREE.MeshStandardMaterial({
   //   color: 0x3a1af1
   // });
 
-  const cube = new THREE.Mesh( geometry, material );
+  // const cube = new THREE.Mesh( geometry, material );
 
-  scene.add( cube );
+  const loader = new GLTFLoader();
+  loader.load(apotekGlbUrl, (gltf) => {
+    scene.add(gltf.scene);
+  });
+
+  // scene.add( cube );
 
   // ------ ANIMATION, CONTROLS
 
