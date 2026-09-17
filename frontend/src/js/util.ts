@@ -1,4 +1,5 @@
 import type { Mesh, Object3D } from "node_modules/@types/three/build/three.cjs";
+import * as THREE from "three";
 
 /**
  * Converts a position within a range to a saturated rainbow CSS hex colour.
@@ -59,4 +60,20 @@ export function tresObjectInfo(obj: Object3D) {
     castShadow: mesh.castShadow,
     receiveShadow: mesh.receiveShadow,
   })
+}
+
+export function disposeThreeObjects(root: THREE.Object3D) {
+  root.traverse((object) => {
+    if (!(object instanceof THREE.Mesh)) return;
+
+    object.geometry?.dispose();
+
+    const materials = Array.isArray(object.material)
+      ? object.material
+      : [object.material];
+
+    for (const material of materials) {
+      material.dispose();
+    }
+  });
 }

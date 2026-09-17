@@ -64,7 +64,7 @@ onMounted(async () => {
 
   const worldPosition = new Vector3()
   apotekState.value?.scene.getWorldPosition(worldPosition)
-  console.log('world position:', worldPosition.toArray().join(', '))
+  // console.log('world position:', worldPosition.toArray().join(', '))
 })
 
 // const interactiveMeshes = computed(() => {
@@ -86,14 +86,14 @@ watch(isLoading, (loading) => {
       if (Array.isArray(obj.material)) {
         obj.material = obj.material.map((mat) => mat.clone())
 
-        console.log('material array:')
-        for (const mat of obj.material) {
-          tresObjectInfo({ material: mat } as Mesh)
-        }
+        // console.log('material array:')
+        // for (const mat of obj.material) {
+        //   tresObjectInfo({ material: mat } as Mesh)
+        // }
       }
       else {
-        obj.material = obj.material.clone()
-        tresObjectInfo(obj)
+        // obj.material = obj.material.clone()
+        // tresObjectInfo(obj)
       }
     }
   })

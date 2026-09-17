@@ -30,7 +30,9 @@ const position = ref<{
           alpha
           :clear-alpha="0"
         >
+        <!-- <TresFog :color="0xFFFFFF" :near="50" :far="100"> -->
           <ApotekScene @position="position = $event" />
+        <!-- </TresFog> -->
         </TresCanvas>
         <DisplayCoordinates :position="position" />
       </div>

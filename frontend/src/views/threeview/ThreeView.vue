@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
+import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 
 import * as THREE from 'three';
 
@@ -13,30 +13,34 @@ import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import type { RotationDegrees } from '@/js/localTypes';
 
+import { disposeThreeObjects } from '@/js/util';
+
 const cameraInfo = ref<{ position: THREE.Vector3, rotation: RotationDegrees }>({
   position: new THREE.Vector3(0, 0, 0),
   rotation: { x: 0, y: 0, z: 0 }
 })
 
-const threeView = ref<HTMLDivElement | null>(null)
+const threeViewRef = ref<HTMLDivElement | null>(null)
 
 let renderer: THREE.WebGLRenderer
 let scene: THREE.Scene
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
+let hdrLoader: HDRLoader
 
-const startingCameraPosition: [number, number, number] = [2, 2, 5] as const;
+const startingCameraPosition: [number, number, number] = [0, 2, 5] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
-onMounted(() => {
-  if (!threeView.value) return
+onMounted(async () => {
+  if (!threeViewRef.value) return
 
   // ------ SETUP
-  const width = threeView.value.clientWidth
-  const height = threeView.value.clientHeight
+  const { width, height } = sizeInfo(threeViewRef.value);
 
   scene = new THREE.Scene()
-  camera = new THREE.PerspectiveCamera(30, width / height, 0.1, 1000)
+  // scene.fog = new THREE.Fog('#ffffff', 1, 100);
+
+  camera = new THREE.PerspectiveCamera(50, width / height, 1, 100)
 
   // target is set by OrbitControls, not here
   camera.position.set(...startingCameraPosition);
@@ -46,18 +50,18 @@ onMounted(() => {
     alpha: true
   })
 
-  renderer.setSize(width, height)
-  renderer.setPixelRatio(window.devicePixelRatio)
+  renderer.setSize(width, height, false)
+  // renderer.setPixelRatio(window.devicePixelRatio)
 
-  threeView.value.appendChild(renderer.domElement);
+  threeViewRef.value.appendChild(renderer.domElement);
 
   // ------ MATERIAL
 
-  const testColor = 0x3a1af1;
+  const testColor = "#ffffff";
 
-  const basicMaterial = new THREE.MeshBasicMaterial({
-    color: testColor
-  });
+  // const basicMaterial = new THREE.MeshBasicMaterial({
+  //   color: testColor
+  // });
 
   const lambertMaterial = new THREE.MeshLambertMaterial({
     color: testColor
@@ -66,7 +70,7 @@ onMounted(() => {
   const phongMaterial = new THREE.MeshPhongMaterial({
     color: testColor,
     // specular: 0xff0000, // color not quantity
-    shininess: 500,
+    shininess: 50,
   });
 
   const standardMaterial = new THREE.MeshStandardMaterial({
@@ -75,20 +79,15 @@ onMounted(() => {
     metalness: 1,
   });
 
-  const physicalMaterial = new THREE.MeshPhysicalMaterial({
+  const standardMaterial2 = new THREE.MeshStandardMaterial({
     color: testColor,
+    roughness: 0,
+    metalness: 0,
   });
 
   const boxMaterial = new THREE.MeshStandardMaterial({
-    color: 0xff0000,
+    color: "yellow",
   });
-
-  // const material
-  //   // = basicMaterial;
-  //   = lambertMaterial;
-  //   // = phongMaterial;
-  //   // = standardMaterial;
-  //   // = physicalMaterial;
 
   // ------ GEOMETRY
 
@@ -96,26 +95,26 @@ onMounted(() => {
   const geometry_cube = new THREE.BoxGeometry( 1, 1, 1 );
 
   // ------ MESH
-  const mesh = new THREE.Mesh( geometry, lambertMaterial );
-  const mesh2 = new THREE.Mesh( geometry, phongMaterial );
-  const mesh3 = new THREE.Mesh( geometry, standardMaterial );
-  const mesh4 = new THREE.Mesh( geometry, physicalMaterial );
+  const lambertMesh = new THREE.Mesh( geometry, lambertMaterial );
+  const phongMesh = new THREE.Mesh( geometry, phongMaterial );
+  const standardMesh = new THREE.Mesh( geometry, standardMaterial );
+  const standardMesh2 = new THREE.Mesh( geometry, standardMaterial2 );
 
   const specialMesh = new THREE.Mesh( geometry_cube, boxMaterial );
 
-  mesh.position.set(-2.25, 0, 0);
-  mesh2.position.set(-0.75, 0, 0);
-  mesh3.position.set(0.75, 0, 0);
-  mesh4.position.set(2.25, 0, 0);
+  lambertMesh.position.set(-2.25, 0, 0);
+  phongMesh.position.set(-0.75, 0, 0);
+  standardMesh.position.set(0.75, 0, 0);
+  standardMesh2.position.set(2.25, 0, 0);
 
-  specialMesh.position.set(0, 2, 4);
+  specialMesh.position.set(0, 2, -4);
 
   // ------ LIGHT SOURCE
 
-  const ambientLight = new THREE.AmbientLight(0xffffff, 1);
+  // const ambientLight = new THREE.AmbientLight(0xffffff, 1);
 
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 20);
-  directionalLight.position.set(1, 3, 2.25);
+  // const directionalLight = new THREE.DirectionalLight(0xffffff, 20);
+  // directionalLight.position.set(1, 3, 2.25);
 
   // const pointLight = new THREE.PointLight(0xffffff, 1);
   // pointLight.position.set(5, 5, 5);
@@ -126,31 +125,32 @@ onMounted(() => {
   // const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
   // hemisphereLight.position.set(0, 20, 0);
 
-  const light
+  // const light
     // = ambientLight;
-    = directionalLight;
+    // = directionalLight;
     // = pointLight;
     // = hemisphereLight;
     // = spotLight;
 
-  const lightHelper
-    = new THREE.DirectionalLightHelper(light);
+  // const lightHelper
+  //   = new THREE.DirectionalLightHelper(light);
     // = new THREE.PointLightHelper(light);
     // = new THREE.SpotLightHelper(light);
     // = new THREE.HemisphereLightHelper(light);
 
   scene.add(
-    mesh,
-    mesh2,
-    mesh3,
-    mesh4,
+    lambertMesh,
+    phongMesh,
+    standardMesh,
+    standardMesh2,
 
     specialMesh,
-    light,
-    ambientLight,
+
+    // light,
+    // ambientLight,
   );
 
-  if (lightHelper) scene.add(lightHelper);
+  // if (lightHelper) scene.add(lightHelper);
 
   // ------ EXTERNAL MESH
 
@@ -189,6 +189,13 @@ onMounted(() => {
 
   renderer.setAnimationLoop( animate );
   window.addEventListener('resize', handleResize);
+
+  hdrLoader = new HDRLoader();
+  // const envMap = await hdrLoader.loadAsync('/illovo_beach_balcony_1k.hdr');
+  const envMap = await hdrLoader.loadAsync('/illovo_beach_balcony_1k.hdr');
+  envMap.mapping = THREE.EquirectangularReflectionMapping;
+  scene.environment = envMap;
+  // scene.background = envMap;
 })
 
 function resetCamera() {
@@ -198,16 +205,24 @@ function resetCamera() {
   controls.update();
 }
 
+function sizeInfo(el: HTMLElement) {
+  const pixelRatio = window.devicePixelRatio || 1;
+
+  const width = el.clientWidth * pixelRatio;
+  const height = el.clientHeight * pixelRatio;
+
+  return { width, height };
+}
+
 function handleResize() {
-  if (!threeView.value) return
+  if (!threeViewRef.value) return
 
-  const width = threeView.value.clientWidth
-  const height = threeView.value.clientHeight
+  const { width, height } = sizeInfo(threeViewRef.value);
 
-  camera.aspect = width / height
-  camera.updateProjectionMatrix()
+  camera.aspect = width / height;
 
-  renderer.setSize(width, height)
+  renderer.setSize(width, height, false);
+  camera.updateProjectionMatrix();
 }
 
 onBeforeUnmount(() => {
@@ -215,6 +230,8 @@ onBeforeUnmount(() => {
 
   controls?.dispose();
   renderer?.dispose();
+
+  disposeThreeObjects(scene);
 
   if (renderer.domElement.parentElement) {
     renderer.domElement.parentElement.removeChild(renderer.domElement);
@@ -224,9 +241,9 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-<div class="three-view" ref="threeView">
+<div class="three-view" ref="threeViewRef">
   <DisplayCoordinates :position="cameraInfo" />
-  <button class="absolute top-2 left-2"@click="resetCamera">Reset Camera</button>
+  <button class="absolute top-2 left-2" @click="resetCamera">Reset Camera</button>
 </div>
 </template>
 
@@ -236,5 +253,11 @@ onBeforeUnmount(() => {
   height: 100vh;
 
   background: linear-gradient(to top, white, rgb(144, 192, 255));
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
 }
 </style>
