@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 
 import * as THREE from 'three';
 
@@ -64,17 +65,22 @@ onMounted(() => {
 
   const phongMaterial = new THREE.MeshPhongMaterial({
     color: testColor,
-    specular: 0xff0000, // color not quantity
+    // specular: 0xff0000, // color not quantity
+    shininess: 500,
   });
 
   const standardMaterial = new THREE.MeshStandardMaterial({
     color: testColor,
-    // roughness: 0.5,
-    metalness: .5,
+    roughness: 0,
+    metalness: 1,
   });
 
   const physicalMaterial = new THREE.MeshPhysicalMaterial({
-    color: testColor
+    color: testColor,
+  });
+
+  const boxMaterial = new THREE.MeshStandardMaterial({
+    color: 0xff0000,
   });
 
   // const material
@@ -86,19 +92,23 @@ onMounted(() => {
 
   // ------ GEOMETRY
 
-  const geometry = new THREE.SphereGeometry( 0.5, 64, 64 );
+  const geometry = new THREE.SphereGeometry( 0.5, 16, 16 );
+  const geometry_cube = new THREE.BoxGeometry( 1, 1, 1 );
 
   // ------ MESH
-
   const mesh = new THREE.Mesh( geometry, lambertMaterial );
   const mesh2 = new THREE.Mesh( geometry, phongMaterial );
   const mesh3 = new THREE.Mesh( geometry, standardMaterial );
   const mesh4 = new THREE.Mesh( geometry, physicalMaterial );
 
+  const specialMesh = new THREE.Mesh( geometry_cube, boxMaterial );
+
   mesh.position.set(-2.25, 0, 0);
   mesh2.position.set(-0.75, 0, 0);
   mesh3.position.set(0.75, 0, 0);
   mesh4.position.set(2.25, 0, 0);
+
+  specialMesh.position.set(0, 2, 4);
 
   // ------ LIGHT SOURCE
 
@@ -134,6 +144,8 @@ onMounted(() => {
     mesh2,
     mesh3,
     mesh4,
+
+    specialMesh,
     light,
     ambientLight,
   );
