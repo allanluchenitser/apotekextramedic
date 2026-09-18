@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { disposeThreeObjects } from '@/js/util';
+import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
 
 type AddObjectOptions = Partial<{
   x?: number,
@@ -33,6 +34,13 @@ export class ThreeSceneContext {
 
     this.scene.add(target);
     this.objects.add(target);
+  }
+
+  async loadEnvironmentMap(url: string) {
+    const hdrLoader = new HDRLoader();
+    const envMap = await hdrLoader.loadAsync(url);
+    envMap.mapping = THREE.EquirectangularReflectionMapping;
+    this.scene.environment = envMap;
   }
 
   dispose() {

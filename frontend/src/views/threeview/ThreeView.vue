@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { HDRLoader } from 'three/addons/loaders/HDRLoader.js';
 
 import * as THREE from 'three';
 
@@ -15,6 +14,7 @@ import type { RotationDegrees } from '@/js/localTypes';
 
 import { disposeThreeObjects } from '@/js/util';
 
+import sunExercise from './sunExercise';
 import spheresExercise from './spheresExercise';
 import cubesExercise from './cubesExercise';
 
@@ -31,9 +31,8 @@ let renderer: THREE.WebGLRenderer
 let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
-let hdrLoader: HDRLoader
 
-const startingCameraPosition: [number, number, number] = [0, 2, 5] as const;
+const startingCameraPosition: [number, number, number] = [0, 50, 0] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
 onMounted(async () => {
@@ -42,10 +41,11 @@ onMounted(async () => {
   // ------ SETUP
   const { width, height } = sizeInfo(threeViewRef.value);
 
-  camera = new THREE.PerspectiveCamera(50, width / height, 1, 100)
+  camera = new THREE.PerspectiveCamera(25, width / height, 1, 200)
 
   // note: not using "lookAt" here because its handled by OrbitControls below
   camera.position.set(...startingCameraPosition);
+  camera.up.set(0, 0, 1);
 
   renderer = new THREE.WebGLRenderer({
     // antialias: true,
@@ -60,9 +60,10 @@ onMounted(async () => {
 
   sceneContext = new ThreeSceneContext();
   // spheresExercise.setup(sceneContext);
-  cubesExercise.setup(sceneContext);
+  // cubesExercise.setup(sceneContext);
+  sunExercise.setup(sceneContext);
 
-  sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
+  // sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH
 
@@ -78,7 +79,7 @@ onMounted(async () => {
   controls.update();
   // const loader = new GLTFLoader();
 
-  function animate() {
+  function animate(time: number) {
     renderer.render(sceneContext.scene, camera);
 
     const pos = camera.position.clone();
@@ -93,16 +94,18 @@ onMounted(async () => {
       position: pos,
       rotation: rot
     };
+
+    const seconds = time * 0.001;
+
+    sceneContext.objects.forEach(obj => {
+      obj.rotation.y = seconds;
+    });
   };
 
   renderer.setAnimationLoop( animate );
   window.addEventListener('resize', handleResize);
 
-  hdrLoader = new HDRLoader();
-  const envMap = await hdrLoader.loadAsync('/illovo_beach_balcony_1k.hdr');
-  envMap.mapping = THREE.EquirectangularReflectionMapping;
-  sceneContext.scene.environment = envMap;
-  // scene.background = envMap;
+  // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr');
 })
 
 function resetCamera() {
