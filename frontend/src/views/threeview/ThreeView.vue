@@ -15,6 +15,11 @@ import type { RotationDegrees } from '@/js/localTypes';
 
 import { disposeThreeObjects } from '@/js/util';
 
+import spheresExercise from './spheresExercise';
+import cubesExercise from './cubesExercise';
+
+import { ThreeSceneContext } from './threeContextUtils';
+
 const cameraInfo = ref<{ position: THREE.Vector3, rotation: RotationDegrees }>({
   position: new THREE.Vector3(0, 0, 0),
   rotation: { x: 0, y: 0, z: 0 }
@@ -23,7 +28,7 @@ const cameraInfo = ref<{ position: THREE.Vector3, rotation: RotationDegrees }>({
 const threeViewRef = ref<HTMLDivElement | null>(null)
 
 let renderer: THREE.WebGLRenderer
-let scene: THREE.Scene
+let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
 let hdrLoader: HDRLoader
@@ -37,12 +42,9 @@ onMounted(async () => {
   // ------ SETUP
   const { width, height } = sizeInfo(threeViewRef.value);
 
-  scene = new THREE.Scene()
-  // scene.fog = new THREE.Fog('#ffffff', 1, 100);
-
   camera = new THREE.PerspectiveCamera(50, width / height, 1, 100)
 
-  // target is set by OrbitControls, not here
+  // note: not using "lookAt" here because its handled by OrbitControls below
   camera.position.set(...startingCameraPosition);
 
   renderer = new THREE.WebGLRenderer({
@@ -51,106 +53,16 @@ onMounted(async () => {
   })
 
   renderer.setSize(width, height, false)
-  // renderer.setPixelRatio(window.devicePixelRatio)
 
   threeViewRef.value.appendChild(renderer.domElement);
 
-  // ------ MATERIAL
+  // ------ SCENE
 
-  const testColor = "#ffffff";
+  sceneContext = new ThreeSceneContext();
+  // spheresExercise.setup(sceneContext);
+  cubesExercise.setup(sceneContext);
 
-  // const basicMaterial = new THREE.MeshBasicMaterial({
-  //   color: testColor
-  // });
-
-  const lambertMaterial = new THREE.MeshLambertMaterial({
-    color: testColor
-  });
-
-  const phongMaterial = new THREE.MeshPhongMaterial({
-    color: testColor,
-    // specular: 0xff0000, // color not quantity
-    shininess: 50,
-  });
-
-  const standardMaterial = new THREE.MeshStandardMaterial({
-    color: testColor,
-    roughness: 0,
-    metalness: 1,
-  });
-
-  const standardMaterial2 = new THREE.MeshStandardMaterial({
-    color: testColor,
-    roughness: 0,
-    metalness: 0,
-  });
-
-  const boxMaterial = new THREE.MeshStandardMaterial({
-    color: "yellow",
-  });
-
-  // ------ GEOMETRY
-
-  const geometry = new THREE.SphereGeometry( 0.5, 16, 16 );
-  const geometry_cube = new THREE.BoxGeometry( 1, 1, 1 );
-
-  // ------ MESH
-  const lambertMesh = new THREE.Mesh( geometry, lambertMaterial );
-  const phongMesh = new THREE.Mesh( geometry, phongMaterial );
-  const standardMesh = new THREE.Mesh( geometry, standardMaterial );
-  const standardMesh2 = new THREE.Mesh( geometry, standardMaterial2 );
-
-  const specialMesh = new THREE.Mesh( geometry_cube, boxMaterial );
-
-  lambertMesh.position.set(-2.25, 0, 0);
-  phongMesh.position.set(-0.75, 0, 0);
-  standardMesh.position.set(0.75, 0, 0);
-  standardMesh2.position.set(2.25, 0, 0);
-
-  specialMesh.position.set(0, 2, -4);
-
-  // ------ LIGHT SOURCE
-
-  // const ambientLight = new THREE.AmbientLight(0xffffff, 1);
-
-  // const directionalLight = new THREE.DirectionalLight(0xffffff, 20);
-  // directionalLight.position.set(1, 3, 2.25);
-
-  // const pointLight = new THREE.PointLight(0xffffff, 1);
-  // pointLight.position.set(5, 5, 5);
-
-  // const spotLight = new THREE.SpotLight(0xffffff, 1);
-  // spotLight.position.set(5, 10, 5);
-
-  // const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0x444444, 1);
-  // hemisphereLight.position.set(0, 20, 0);
-
-  // const light
-    // = ambientLight;
-    // = directionalLight;
-    // = pointLight;
-    // = hemisphereLight;
-    // = spotLight;
-
-  // const lightHelper
-  //   = new THREE.DirectionalLightHelper(light);
-    // = new THREE.PointLightHelper(light);
-    // = new THREE.SpotLightHelper(light);
-    // = new THREE.HemisphereLightHelper(light);
-
-  scene.add(
-    lambertMesh,
-    phongMesh,
-    standardMesh,
-    standardMesh2,
-
-    specialMesh,
-
-    // light,
-    // ambientLight,
-  );
-
-  // if (lightHelper) scene.add(lightHelper);
+  sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH
 
@@ -167,11 +79,7 @@ onMounted(async () => {
   // const loader = new GLTFLoader();
 
   function animate() {
-    // cube.rotation.x = time / 4000
-    // cube.rotation.y = time / 2000
-
-    // controls.update();
-    renderer.render(scene, camera);
+    renderer.render(sceneContext.scene, camera);
 
     const pos = camera.position.clone();
 
@@ -191,10 +99,9 @@ onMounted(async () => {
   window.addEventListener('resize', handleResize);
 
   hdrLoader = new HDRLoader();
-  // const envMap = await hdrLoader.loadAsync('/illovo_beach_balcony_1k.hdr');
   const envMap = await hdrLoader.loadAsync('/illovo_beach_balcony_1k.hdr');
   envMap.mapping = THREE.EquirectangularReflectionMapping;
-  scene.environment = envMap;
+  sceneContext.scene.environment = envMap;
   // scene.background = envMap;
 })
 
@@ -231,7 +138,7 @@ onBeforeUnmount(() => {
   controls?.dispose();
   renderer?.dispose();
 
-  disposeThreeObjects(scene);
+  sceneContext.dispose();
 
   if (renderer.domElement.parentElement) {
     renderer.domElement.parentElement.removeChild(renderer.domElement);
@@ -243,7 +150,9 @@ onBeforeUnmount(() => {
 <template>
 <div class="three-view" ref="threeViewRef">
   <DisplayCoordinates :position="cameraInfo" />
-  <button class="absolute top-2 left-2" @click="resetCamera">Reset Camera</button>
+  <button class="absolute top-2 left-2 py-0.5 px-1 border rounded text-sm cursor-pointer" @click="resetCamera">
+    center
+  </button>
 </div>
 </template>
 
