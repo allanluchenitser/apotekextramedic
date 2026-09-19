@@ -8,18 +8,23 @@ export default {
 
     const loader = new THREE.TextureLoader();
 
-    const materials = [
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture1.webp') }),
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture2.webp') }),
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture3.webp') }),
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture4.webp') }),
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture5.webp') }),
-      new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture6.webp') }),
-    ]
+    const material = new THREE.MeshBasicMaterial({
+      // color: "#ff8844",
+      map: loadColorTexture('/george/georgeTexture1.webp')
+    })
+
+    // const materials = [
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture1.webp') }),
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture2.webp') }),
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture3.webp') }),
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture4.webp') }),
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture5.webp') }),
+    //   new THREE.MeshBasicMaterial({ color: "ff8844", map: loadColorTexture('/george/georgeTexture6.webp') }),
+    // ]
 
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
-    const mesh = new THREE.Mesh(boxGeometry, materials);
+    const mesh = new THREE.Mesh(boxGeometry, material);
     ctx.scene.add(mesh);
 
     function loadColorTexture( path: string ) {
