@@ -15,10 +15,10 @@ export default {
 
     // ------ add sun
 
-    const sphereGeometry = new THREE.SphereGeometry(1, 8, 8);
+    const sphereGeometry = new THREE.SphereGeometry(1, 12, 12);
 
     const sunMaterial = new THREE.MeshPhongMaterial({
-      emissive: 0xFFFF00
+      // emissive: 0xFFFF00
     });
 
     const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
@@ -30,6 +30,10 @@ export default {
 
     const pointLight = new THREE.PointLight("white", 500);
     ctx.scene.add(pointLight);
+
+    const pointLight2 = new THREE.PointLight("white", 500);
+    pointLight2.position.set(0, 10, 0);
+    ctx.scene.add(pointLight2);
 
     // ------ add earth
     const earthOrbit = new THREE.Object3D;
