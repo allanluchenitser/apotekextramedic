@@ -18,6 +18,7 @@
     "@tresjs/core": "latest",
     "@tresjs/leches": "latest",
     "@tresjs/post-processing": "latest",
+    "lil-gui": "^0.21.0",
     "tailwindcss": "^4.3.3",
     "three": "latest",
     "three-stdlib": "latest",

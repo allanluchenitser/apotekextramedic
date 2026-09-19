@@ -32,7 +32,7 @@ let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
 
-const startingCameraPosition: [number, number, number] = [0, 50, 0] as const;
+const startingCameraPosition: [number, number, number] = [0, 100, 0] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
 onMounted(async () => {
