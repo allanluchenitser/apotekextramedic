@@ -72,7 +72,7 @@ export class AxisGridHelper {
 
     if (!Array.isArray(axes.material)) axes.material.depthTest = false;
 
-    axes.renderOrder = 2;  // after the grid
+    axes.renderOrder = 2; // after the grid
     node.add(axes);
 
     const grid = new THREE.GridHelper(units, units);
@@ -84,9 +84,11 @@ export class AxisGridHelper {
     this.axes = axes;
     this.visible = false;
   }
+
   get visible() {
     return this.#_visible;
   }
+
   set visible(v) {
     this.#_visible = v;
     this.grid.visible = v;

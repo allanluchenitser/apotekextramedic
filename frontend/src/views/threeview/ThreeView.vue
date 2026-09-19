@@ -14,9 +14,10 @@ import type { RotationDegrees } from '@/js/localTypes';
 
 import { disposeThreeObjects } from '@/js/util';
 
-import sunExercise from './sunExercise';
-import spheresExercise from './spheresExercise';
-import cubesExercise from './cubesExercise';
+// import sunExercise from './sunExercise';
+// import spheresExercise from './spheresExercise';
+// import cubesExercise from './cubesExercise';
+import textureExercise from './textureExercise';
 
 import { ThreeSceneContext } from './threeContextUtils';
 
@@ -32,7 +33,7 @@ let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
 
-const startingCameraPosition: [number, number, number] = [0, -50, 0] as const;
+const startingCameraPosition: [number, number, number] = [0, 0, 10] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
 onMounted(async () => {
@@ -44,7 +45,7 @@ onMounted(async () => {
 
   // camer.lookAt replaced by controls below
   camera.position.set(...startingCameraPosition);
-  camera.up.set(0, 0, 1);
+  // camera.up.set(0, 0, 1);
 
   renderer = new THREE.WebGLRenderer({ alpha: true })
   renderer.setSize(width, height, false)
@@ -56,7 +57,8 @@ onMounted(async () => {
   sceneContext = new ThreeSceneContext();
   // spheresExercise.setup(sceneContext);
   // cubesExercise.setup(sceneContext);
-  sunExercise.setup(sceneContext);
+  // sunExercise.setup(sceneContext);
+  textureExercise.setup(sceneContext);
   // sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH

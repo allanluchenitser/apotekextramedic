@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import type { ThreeSceneContext } from "./threeContextUtils";
-import { objectScale } from 'three/tsl';
 import { AxisGridHelper } from "./threeContextUtils";
 import GUI from 'lil-gui';
 
@@ -36,7 +35,7 @@ export default {
     ctx.scene.add(pointLight2);
 
     // ------ add earth
-    const earthOrbit = new THREE.Object3D;
+    const earthOrbit = new THREE.Object3D();
     earthOrbit.position.x = 10;
     solarSystem.add(earthOrbit);
 
