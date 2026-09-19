@@ -40,18 +40,13 @@ onMounted(async () => {
 
   // ------ SETUP
   const { width, height } = sizeInfo(threeViewRef.value);
-
   camera = new THREE.PerspectiveCamera(25, width / height, 1, 200)
 
-  // note: not using "lookAt" here because its handled by OrbitControls below
+  // camer.lookAt replaced by controls below
   camera.position.set(...startingCameraPosition);
   camera.up.set(0, 0, 1);
 
-  renderer = new THREE.WebGLRenderer({
-    // antialias: true,
-    alpha: true
-  })
-
+  renderer = new THREE.WebGLRenderer({ alpha: true })
   renderer.setSize(width, height, false)
 
   threeViewRef.value.appendChild(renderer.domElement);
@@ -62,7 +57,6 @@ onMounted(async () => {
   // spheresExercise.setup(sceneContext);
   // cubesExercise.setup(sceneContext);
   sunExercise.setup(sceneContext);
-
   // sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH
@@ -77,7 +71,6 @@ onMounted(async () => {
   controls = new OrbitControls( camera, renderer.domElement );
   controls.target.set(...startingCameraTarget);
   controls.update();
-  // const loader = new GLTFLoader();
 
   function animate(time: number) {
     renderer.render(sceneContext.scene, camera);
@@ -95,7 +88,7 @@ onMounted(async () => {
       rotation: rot
     };
 
-    const seconds = time * 0.001;
+    const seconds = time * 0.0003;
 
     sceneContext.objects.forEach(obj => {
       obj.rotation.y = seconds;
@@ -105,12 +98,17 @@ onMounted(async () => {
   renderer.setAnimationLoop( animate );
   window.addEventListener('resize', handleResize);
 
+  const axes = new THREE.AxesHelper(25);
+  // axes.setColors("red", "blue", "black")
+  sceneContext.scene.add(axes);
+
   // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr');
+
+  sceneContext.buildTree();
 })
 
 function resetCamera() {
   camera.position.set(...startingCameraPosition);
-  // camera.lookAt(...startingCameraTarget); // redundant, or worse
   controls.target.set(...startingCameraTarget);
   controls.update();
 }

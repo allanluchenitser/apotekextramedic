@@ -43,6 +43,19 @@ export class ThreeSceneContext {
     this.scene.environment = envMap;
   }
 
+  buildTree() {
+    const makeTree = (obj: THREE.Object3D): Record<string, any> => {
+      return Object.fromEntries(
+        obj.children.map(child => [
+          child.name || child.type,
+          makeTree(child)
+        ])
+      );
+    };
+
+    console.log(makeTree(this.scene));
+  }
+
   dispose() {
     disposeThreeObjects(this.scene);
     this.objects.clear();
