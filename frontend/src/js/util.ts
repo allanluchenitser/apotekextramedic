@@ -77,3 +77,56 @@ export function disposeThreeObjects(root: THREE.Object3D) {
     }
   });
 }
+
+// ------ GEOMETRY UTILITIES
+
+type AddCubeFrameOptions = {
+  size?: number
+  thickness?: number
+  color?: string
+}
+
+export function addCubeFrame(parent: THREE.Mesh, { size = 1, thickness = 0.03, color = "blue" }: AddCubeFrameOptions = {}) {
+  const half = size / 2;
+
+  const material = new THREE.MeshBasicMaterial({ color });
+
+  // Edges parallel to X
+  for (const y of [-half, half]) {
+    for (const z of [-half, half]) {
+      const edge = new THREE.Mesh(
+        new THREE.BoxGeometry(size, thickness, thickness),
+        material
+      );
+
+      edge.position.set(0, y, z);
+      parent.add(edge);
+    }
+  }
+
+  // Edges parallel to Y
+  for (const x of [-half, half]) {
+    for (const z of [-half, half]) {
+      const edge = new THREE.Mesh(
+        new THREE.BoxGeometry(thickness, size, thickness),
+        material
+      );
+
+      edge.position.set(x, 0, z);
+      parent.add(edge);
+    }
+  }
+
+  // Edges parallel to Z
+  for (const x of [-half, half]) {
+    for (const y of [-half, half]) {
+      const edge = new THREE.Mesh(
+        new THREE.BoxGeometry(thickness, thickness, size),
+        material
+      );
+
+      edge.position.set(x, y, 0);
+      parent.add(edge);
+    }
+  }
+}

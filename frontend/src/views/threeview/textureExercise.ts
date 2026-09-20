@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import type { ThreeSceneContext } from "./threeContextUtils";
 
+import { addCubeFrame } from '@/js/util';
+
 export default {
   setup(ctx: ThreeSceneContext) {
     const scene = ctx.scene;
@@ -25,11 +27,20 @@ export default {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
     const mesh = new THREE.Mesh(boxGeometry, material);
+    addCubeFrame(mesh, { color: "white "})
     ctx.scene.add(mesh);
 
     function loadColorTexture( path: string ) {
       const texture = loader.load( path );
       texture.colorSpace = THREE.SRGBColorSpace;
+
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.offset.set(.2, .5);
+      texture.rotation = THREE.MathUtils.degToRad(45);
+
+      texture.repeat.set(3, 3)
+
       return texture;
     }
   },

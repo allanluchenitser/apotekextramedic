@@ -17,7 +17,8 @@ import { disposeThreeObjects } from '@/js/util';
 // import sunExercise from './sunExercise';
 // import spheresExercise from './spheresExercise';
 // import cubesExercise from './cubesExercise';
-import textureExercise from './textureExercise';
+// import textureExercise from './textureExercise';
+import lightsExercise from './lightsExercise';
 
 import { ThreeSceneContext } from './threeContextUtils';
 
@@ -33,7 +34,7 @@ let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
 
-const startingCameraPosition: [number, number, number] = [0, 0, 10] as const;
+const startingCameraPosition: [number, number, number] = [0, 10, 20] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
 onMounted(async () => {
@@ -47,7 +48,11 @@ onMounted(async () => {
   camera.position.set(...startingCameraPosition);
   // camera.up.set(0, 0, 1);
 
-  renderer = new THREE.WebGLRenderer({ alpha: true })
+  renderer = new THREE.WebGLRenderer({
+    alpha: true,
+    antialias: true
+  })
+
   renderer.setSize(width, height, false)
 
   threeViewRef.value.appendChild(renderer.domElement);
@@ -58,7 +63,8 @@ onMounted(async () => {
   // spheresExercise.setup(sceneContext);
   // cubesExercise.setup(sceneContext);
   // sunExercise.setup(sceneContext);
-  textureExercise.setup(sceneContext);
+  // textureExercise.setup(sceneContext);
+  lightsExercise.setup(sceneContext);
   // sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH
