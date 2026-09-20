@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-export function makePlaneMesh() {
+export function makePlaneMesh(material: "phong" | "standard" = "standard") {
   const planeSize = 40;
   const loader = new THREE.TextureLoader();
   const texture = loader.load('/tinychecker.png');
@@ -12,7 +12,9 @@ export function makePlaneMesh() {
   texture.repeat.set(repeats, repeats);
 
   const planeGeo = new THREE.PlaneGeometry(planeSize, planeSize);
-  const planeMat = new THREE.MeshPhongMaterial({ map: texture, side: THREE.DoubleSide })
+  const planeMat = material === "phong"
+    ? new THREE.MeshPhongMaterial({ map: texture, side: THREE.DoubleSide })
+    : new THREE.MeshStandardMaterial({ map: texture, side: THREE.DoubleSide });
   const mesh = new THREE.Mesh(planeGeo, planeMat);
 
   mesh.rotation.x = Math.PI * -0.5;

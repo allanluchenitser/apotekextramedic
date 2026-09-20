@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { RectAreaLightHelper } from 'three/addons/helpers/RectAreaLightHelper.js';
 
 export function makeAmbient() {
   const color = 0xFFFFFF;
@@ -42,6 +43,44 @@ export function makePoint(helper: boolean = false):
 
   if (helper) {
     return [light, new THREE.PointLightHelper(light)];
+  }
+
+  return light;
+}
+
+export function makeSpot(helper: true): [THREE.SpotLight, THREE.SpotLightHelper];
+export function makeSpot(helper: false): THREE.SpotLight;
+export function makeSpot(helper: boolean = false):
+  THREE.SpotLight | [THREE.SpotLight, THREE.SpotLightHelper]
+{
+  const color = 0xFFFFFF;
+  const intensity = 50;
+  const light = new THREE.SpotLight(color, intensity);
+  light.position.set(0, 10, 0);
+  light.target.position.set(-5, 0, 0);
+
+  if (helper) {
+    return [light, new THREE.SpotLightHelper(light)];
+  }
+
+  return light;
+}
+
+export function makeRectArea(helper: true): [THREE.RectAreaLight, RectAreaLightHelper];
+export function makeRectArea(helper: false): THREE.RectAreaLight;
+export function makeRectArea(helper: boolean = false):
+  THREE.RectAreaLight | [THREE.RectAreaLight, RectAreaLightHelper]
+{
+  const color = 0xFFFFFF;
+  const intensity = 50;
+  const width = 12;
+  const height = 4;
+  const light = new THREE.RectAreaLight(color, intensity, width, height);
+  light.position.set(0, 10, 0);
+  light.rotation.x = Math.PI / 2;
+
+  if (helper) {
+    return [light, new RectAreaLightHelper(light)];
   }
 
   return light;

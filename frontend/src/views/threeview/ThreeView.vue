@@ -2,6 +2,7 @@
 import { ref, onMounted, onBeforeUnmount } from 'vue';
 
 import * as THREE from 'three';
+import { RectAreaLightUniformsLib } from 'three/addons/lights/RectAreaLightUniformsLib.js';
 
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
@@ -42,7 +43,7 @@ onMounted(async () => {
 
   // ------ SETUP
   const { width, height } = sizeInfo(threeViewRef.value);
-  camera = new THREE.PerspectiveCamera(25, width / height, 1, 200)
+  camera = new THREE.PerspectiveCamera(25, width / height, 1, 500)
 
   // camer.lookAt replaced by controls below
   camera.position.set(...startingCameraPosition);
@@ -52,6 +53,8 @@ onMounted(async () => {
     alpha: true,
     antialias: true
   })
+
+  RectAreaLightUniformsLib.init();
 
   renderer.setSize(width, height, false)
 
@@ -108,8 +111,7 @@ onMounted(async () => {
   window.addEventListener('resize', handleResize);
 
   const axes = new THREE.AxesHelper(25);
-  // axes.setColors("red", "blue", "black")
-  sceneContext.scene.add(axes);
+  sceneContext.scene.add(axes); // x: red, y: green, z: blue
 
   // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr', true);
 
