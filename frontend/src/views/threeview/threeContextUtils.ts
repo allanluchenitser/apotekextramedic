@@ -1,6 +1,7 @@
 import * as THREE from 'three';
 import { disposeThreeObjects } from '@/js/util';
 import { HDRLoader } from 'three/examples/jsm/loaders/HDRLoader.js';
+import type GUI from 'lil-gui';
 
 type AddObjectOptions = Partial<{
   x?: number,
@@ -12,6 +13,7 @@ type AddObjectOptions = Partial<{
 export class ThreeSceneContext {
   scene = new THREE.Scene();
   objects = new Set<THREE.Object3D>();
+  gui: GUI | undefined = undefined;
 
   addObject(object: THREE.Object3D, options?: AddObjectOptions) {
     const { x, y, z, randomColor } = options ?? {};
@@ -43,7 +45,7 @@ export class ThreeSceneContext {
     this.scene.environment = envMap;
   }
 
-  buildTree() {
+  buildTree(header?: string) {
     const makeTree = (obj: THREE.Object3D): Record<string, any> => {
       return Object.fromEntries(
         obj.children.map(child => [
@@ -53,6 +55,7 @@ export class ThreeSceneContext {
       );
     };
 
+    if (header) console.log(header);
     console.log(makeTree(this.scene));
   }
 

@@ -32,6 +32,8 @@ export default tresLintConfig({
     'style/eol-last': 'off',
     'style/no-trailing-spaces': 'off',
     'style/comma-dangle': 'off',
+    'style/padded-blocks': 'off',
+    'style/brace-style': 'off',
 
     'vue/block-tag-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',

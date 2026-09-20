@@ -18,7 +18,7 @@ import { disposeThreeObjects } from '@/js/util';
 // import spheresExercise from './spheresExercise';
 // import cubesExercise from './cubesExercise';
 // import textureExercise from './textureExercise';
-import lightsExercise from './lightsExercise';
+import lightsExercise from './lightexercise/lightsExercise';
 
 import { ThreeSceneContext } from './threeContextUtils';
 
@@ -112,7 +112,7 @@ onMounted(async () => {
 
   // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr');
 
-  sceneContext.buildTree();
+  sceneContext.buildTree('___Scene Hierarchy___');
 })
 
 function resetCamera() {
@@ -146,6 +146,7 @@ onBeforeUnmount(() => {
 
   controls?.dispose();
   renderer?.dispose();
+  sceneContext.gui?.destroy();
 
   sceneContext.dispose();
 

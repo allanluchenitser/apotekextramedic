@@ -27,7 +27,7 @@ export default {
     const boxGeometry = new THREE.BoxGeometry(1, 1, 1);
 
     const mesh = new THREE.Mesh(boxGeometry, material);
-    addCubeFrame(mesh, { color: "white "})
+    addCubeFrame(mesh, { color: "white" })
     ctx.scene.add(mesh);
 
     function loadColorTexture( path: string ) {
@@ -36,7 +36,7 @@ export default {
 
       texture.wrapS = THREE.RepeatWrapping;
       texture.wrapT = THREE.RepeatWrapping;
-      texture.offset.set(.2, .5);
+      texture.offset.set(0.2, 0.5);
       texture.rotation = THREE.MathUtils.degToRad(45);
 
       texture.repeat.set(3, 3)
