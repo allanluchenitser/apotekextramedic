@@ -38,11 +38,15 @@ export class ThreeSceneContext {
     this.objects.add(target);
   }
 
-  async loadEnvironmentMap(url: string) {
+  async loadEnvironmentMap(url: string, setBackground = false) {
     const hdrLoader = new HDRLoader();
     const envMap = await hdrLoader.loadAsync(url);
     envMap.mapping = THREE.EquirectangularReflectionMapping;
     this.scene.environment = envMap;
+    if (setBackground) {
+      this.scene.background = envMap;
+    }
+    return envMap;
   }
 
   buildTree(header?: string) {

@@ -26,21 +26,21 @@ export default {
     // const hemisphereLight = makeHemisphere();
     // makeHemisphereGui(gui, hemisphereLight);
 
-    // const [directionalLight, directionalHelper] = makeDirectional(true);
-    // makeDirectionalGui(gui, directionalLight, directionalHelper);
+    const [directionalLight, directionalHelper] = makeDirectional(true);
+    makeDirectionalGui(gui, directionalLight, directionalHelper);
 
-    const [pointLight, pointHelper] = makePoint(true);
-    makePointGui(gui, pointLight, pointHelper);
+    // const [pointLight, pointHelper] = makePoint(true);
+    // makePointGui(gui, pointLight, pointHelper);
 
     ctx.scene
       // .add(ambientLight)
       // .add(hemisphereLight)
 
-      // .add(directionalLight)
-      // .add(directionalLight.target)
-      // .add(directionalHelper)
+      .add(directionalLight)
+      .add(directionalLight.target)
+      .add(directionalHelper)
 
-      .add(pointLight)
-      .add(pointHelper)
+      // .add(pointLight)
+      // .add(pointHelper)
   }
 }

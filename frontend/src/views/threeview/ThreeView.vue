@@ -34,7 +34,7 @@ let sceneContext: ThreeSceneContext
 let camera: THREE.PerspectiveCamera
 let controls: OrbitControls
 
-const startingCameraPosition: [number, number, number] = [0, 10, 20] as const;
+const startingCameraPosition: [number, number, number] = [0, 30, 40] as const;
 const startingCameraTarget: [number, number, number] = [0, 0, 0] as const;
 
 onMounted(async () => {
@@ -81,7 +81,8 @@ onMounted(async () => {
   controls.update();
 
   function animate(time: number) {
-    renderer.render(sceneContext.scene, camera);
+    const seconds = time * 0.0003;
+    void seconds;
 
     const pos = camera.position.clone();
 
@@ -96,11 +97,11 @@ onMounted(async () => {
       rotation: rot
     };
 
-    const seconds = time * 0.0003;
+    // sceneContext.objects.forEach(obj => {
+    //   obj.rotation.y = seconds;
+    // });
 
-    sceneContext.objects.forEach(obj => {
-      obj.rotation.y = seconds;
-    });
+    renderer.render(sceneContext.scene, camera);
   };
 
   renderer.setAnimationLoop( animate );
@@ -110,7 +111,7 @@ onMounted(async () => {
   // axes.setColors("red", "blue", "black")
   sceneContext.scene.add(axes);
 
-  // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr');
+  // await sceneContext.loadEnvironmentMap('/illovo_beach_balcony_1k.hdr', true);
 
   sceneContext.buildTree('___Scene Hierarchy___');
 })

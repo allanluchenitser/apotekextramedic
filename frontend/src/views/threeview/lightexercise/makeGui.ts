@@ -21,7 +21,7 @@ export function makeDirectionalGui(
   gui.add(directionalLight, 'intensity', 0, 5, 0.01);
 
   const updatePos = () => {
-    directionalLight.updateMatrixWorld();
+    // directionalLight.updateMatrixWorld();
     helper.update();
   };
 
