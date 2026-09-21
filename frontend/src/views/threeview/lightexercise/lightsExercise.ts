@@ -2,9 +2,9 @@ import * as THREE from "three";
 import type { ThreeSceneContext } from "../threeContextUtils";
 import { GUI } from 'lil-gui';
 
-import { makePlaneMesh, makeCubeMesh, makeSphereMesh } from './makeMesh';
-import { makeAmbient, makeHemisphere, makeDirectional, makePoint, makeSpot, makeRectArea } from './makeLight';
-import { makeAmbientGui, makeHemisphereGui, makeDirectionalGui, makePointGui, makeSpotGui, makeRectAreaGui } from './makeGui';
+import { makePlaneMesh, makeCubeMesh, makeSphereMesh } from '@/js/makeMesh';
+import { makeAmbient, makeHemisphere, makeDirectional, makePoint, makeSpot, makeRectArea } from '@/js/makeLight';
+import { makeAmbientGui, makeHemisphereGui, makeDirectionalGui, makePointGui, makeSpotGui, makeRectAreaGui } from '@/js/makeGui';
 
 export default {
   setup(ctx: ThreeSceneContext) {

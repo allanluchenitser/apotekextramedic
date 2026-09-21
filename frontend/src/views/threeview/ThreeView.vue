@@ -15,10 +15,10 @@ import type { RotationDegrees } from '@/js/localTypes';
 
 import { disposeThreeObjects } from '@/js/util';
 
-// import sunExercise from './sunExercise';
-// import spheresExercise from './spheresExercise';
-// import cubesExercise from './cubesExercise';
-// import textureExercise from './textureExercise';
+// import sunExercise from './sunexercise/sunExercise';
+// import spheresExercise from './spheresexercise/spheresExercise';
+// import cubesExercise from './cubesexercise/cubesExercise';
+// import textureExercise from './textureexercise/textureExercise';
 import lightsExercise from './lightexercise/lightsExercise';
 
 import { ThreeSceneContext } from './threeContextUtils';
