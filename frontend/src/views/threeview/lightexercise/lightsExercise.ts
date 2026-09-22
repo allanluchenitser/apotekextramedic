@@ -8,12 +8,14 @@ import { makeAmbientGui, makeHemisphereGui, makeDirectionalGui, makePointGui, ma
 
 export default {
   setup(ctx: ThreeSceneContext) {
-    const gui = new GUI();
-    ctx.gui = gui;
+    // const gui = new GUI();
+    // ctx.gui = gui;
 
     const floorPlaneMesh = makePlaneMesh();
     const cubeMesh = makeCubeMesh();
     const sphereMesh = makeSphereMesh();
+
+    sphereMesh.position.set(0, 15, 0);
 
     const ceilingPlaneMesh = makePlaneMesh();
     ceilingPlaneMesh.position.set(0, 25, 0);
@@ -33,14 +35,14 @@ export default {
     // const [directionalLight, directionalHelper] = makeDirectional(true);
     // makeDirectionalGui(gui, directionalLight, directionalHelper);
 
-    // const [pointLight, pointHelper] = makePoint(true);
+    const pointLight = makePoint(false);
     // makePointGui(gui, pointLight, pointHelper);
 
     // const [spotLight, spotHelper] = makeSpot(true);
     // makeSpotGui(gui, spotLight, spotHelper);
 
-    const [rectAreaLight, rectAreaHelper] = makeRectArea(true);
-    makeRectAreaGui(gui, rectAreaLight, rectAreaHelper);
+    // const [rectAreaLight, rectAreaHelper] = makeRectArea(true);
+    // makeRectAreaGui(gui, rectAreaLight, rectAreaHelper);
 
     ctx.scene
       // .add(ambientLight)
@@ -50,14 +52,14 @@ export default {
       // .add(directionalLight.target)
       // .add(directionalHelper)
 
-      // .add(pointLight)
+      .add(pointLight)
       // .add(pointHelper)
 
       // .add(spotLight)
       // .add(spotLight.target)
       // .add(spotHelper)
 
-      .add(rectAreaLight)
-      .add(rectAreaHelper)
+      // .add(rectAreaLight)
+      // .add(rectAreaHelper)
   }
 }
