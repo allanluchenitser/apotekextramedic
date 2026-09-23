@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import type { ThreeSceneContext } from "./threeContextUtils";
+import type { ThreeSceneContext } from "@/views/threeview/threeContextUtils"
 
 import { addCubeFrame } from '@/js/util';
 

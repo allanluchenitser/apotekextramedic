@@ -22,7 +22,7 @@ export function makeDirectional(helper: boolean = false):
   const intensity = 3;
   const light = new THREE.DirectionalLight(color, intensity);
   light.position.set(0, 10, 0);
-  light.target.position.set(-5, 0, 0);
+  light.target.position.set(0, 0, 0);
 
   if (helper) {
     return [light, new THREE.DirectionalLightHelper(light)];
@@ -39,7 +39,6 @@ export function makePoint(helper: boolean = false):
   const color = 0xFFFFFF;
   const intensity = 150;
   const light = new THREE.PointLight(color, intensity);
-  light.position.set(0, 10, 0);
 
   if (helper) {
     return [light, new THREE.PointLightHelper(light)];

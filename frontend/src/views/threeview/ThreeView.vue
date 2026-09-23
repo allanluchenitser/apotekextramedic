@@ -21,6 +21,9 @@ import type { RotationDegrees } from '@/js/localTypes';
 // import cubesExercise from './cubesexercise/cubesExercise';
 // import textureExercise from './textureexercise/textureExercise';
 import lightsExercise from './lightexercise/lightsExercise';
+import shadowsExercise from './shadowsexercise/shadowsExercise';
+import { sphereShadowBases } from './shadowsexercise/shadowsExercise';
+
 
 import { ThreeSceneContext } from './threeContextUtils';
 
@@ -80,8 +83,10 @@ onMounted(async () => {
 
   renderer = new THREE.WebGLRenderer({
     alpha: true,
-    antialias: true
+    antialias: true,
   })
+
+  renderer.shadowMap.enabled = true;
 
   RectAreaLightUniformsLib.init();
 
@@ -97,6 +102,8 @@ onMounted(async () => {
   // sunExercise.setup(sceneContext);
   // textureExercise.setup(sceneContext);
   lightsExercise.setup(sceneContext);
+  // shadowsExercise.setup(sceneContext);
+
   // sceneContext.scene.fog = new THREE.Fog('#ffffff', 1, 100);
 
   // ------ EXTERNAL MESH
@@ -120,8 +127,8 @@ onMounted(async () => {
     if (!threeViewRef.value) return
     // ------ timers
 
-    const seconds = time * 0.0003;
-    void seconds;
+    const seconds = time * 0.001;
+
 
     // ------ track PCam for data readout
 
@@ -156,6 +163,43 @@ onMounted(async () => {
 
     // renderer.setScissor(0, 0, fullWidth / 2, fullHeight);
     // renderer.setScissorTest(true);
+
+    function bounceSpheres() {
+        if (!sphereShadowBases) return;
+
+        sphereShadowBases.forEach((sphereShadowBase, ndx) => {
+        const { base, sphereMesh, shadowMesh, y } = sphereShadowBase;
+
+        // u is a value that goes from 0 to 1 as we iterate the spheres
+        const u = ndx / sphereShadowBases.length;
+
+        // compute a position for the base. This will move
+        // both the sphere and its shadow
+        const speed = seconds * .2;
+
+        const angle = speed + u * Math.PI * 2 * (ndx % 2 ? 1 : -1);
+        const radius = Math.sin(speed - ndx) * 10;
+
+        base.position.set(Math.cos(angle) * radius, 0, Math.sin(angle) * radius);
+
+        // yOff is a value that goes from 0 to 1
+        const yOff = Math.abs(Math.sin(seconds * 2 + ndx));
+
+        // move the sphere up and down
+        sphereMesh.position.y = y + THREE.MathUtils.lerp(-2, 2, yOff);
+        // fade the shadow as the sphere goes up
+        shadowMesh.material.opacity = THREE.MathUtils.lerp(1, .25, yOff);
+      });
+    }
+
+    // bounceSpheres();
+
+
+
+
+
+
+
 
     renderer.render(sceneContext.scene, PCam);
 
