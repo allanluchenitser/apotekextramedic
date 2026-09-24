@@ -15,11 +15,18 @@ export function makeHemisphereGui(gui: GUI, hemisphereLight: THREE.HemisphereLig
 export function makeDirectionalGui(
   gui: GUI,
   directionalLight: THREE.DirectionalLight,
-  helper: THREE.DirectionalLightHelper
+  helper: THREE.DirectionalLightHelper,
+  className: string = 'top-left',
+  title: string = 'Directional Light'
 ) {
   const MAX = 20;
 
   gui.add(directionalLight, 'intensity', 0, 5, 0.01);
+
+  if (className) {
+    gui.domElement.classList.add(className);
+    gui.domElement.setAttribute('title', title);
+  }
 
   const updatePos = () => {
     helper.update();

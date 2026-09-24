@@ -22,6 +22,7 @@ import ThreeView from '@/views/threeview/ThreeView.vue'
       <router-link to="/apotek">apotek</router-link>
       <router-link to="/three">three</router-link>
       <router-link to="/practice">practice</router-link>
+      <router-link to="/ortho">ortho</router-link>
     </nav>
     <router-view></router-view>
   </main>

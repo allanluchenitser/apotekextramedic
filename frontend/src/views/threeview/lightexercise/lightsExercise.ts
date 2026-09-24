@@ -4,7 +4,7 @@ import { GUI } from 'lil-gui';
 
 import { makePlaneMesh, makeCubeMesh, makeSphereMesh } from '@/js/makeMesh';
 import { makeAmbient, makeHemisphere, makeDirectional, makePoint, makeSpot, makeRectArea } from '@/js/makeLight';
-import { makeAmbientGui, makeHemisphereGui, makeDirectionalGui, makePointGui, makeSpotGui, makeRectAreaGui } from '@/js/makeGui';
+import { makeAmbientGui, makeHemisphereGui, makeDirectionalGui, makePointGui, makeSpotGui, makeRectAreaGui } from '@/js/lightGuiHelp';
 
 export default {
   setup(ctx: ThreeSceneContext) {
