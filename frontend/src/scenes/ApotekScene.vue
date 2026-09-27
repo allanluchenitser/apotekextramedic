@@ -5,10 +5,26 @@ import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
-import { Vector3, Mesh } from 'three'
+
+import { Vector3, Mesh, PointLight, DirectionalLight, PointLightHelper, DirectionalLightHelper } from 'three'
 
 import { toFixedNumber, tresObjectInfo } from '@/js/util'
 import type { RotationDegrees } from '@/js/localTypes'
+
+import { usePointLightGui } from '@/scenes/usePointLightGui'
+import { useDirectionalLightGui } from '@/scenes/useDirectionalLightGui'
+
+import GUI from 'lil-gui'
+
+// ------ REF ------
+
+const controls = ref<any>(null)
+
+const pointLightRef = ref<PointLight | null>(null)
+const pointLightHelperRef = ref<PointLightHelper | null>(null)
+
+  const directionLightRef = ref<DirectionalLight | null>(null)
+    const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
 
 // ------ SETUP ------
 
@@ -24,14 +40,36 @@ const {
 const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
 
-const controls = ref<any>(null)
-
 const initialCameraPosition = new Vector3(0, 8, 15.05);
 const initialLookAtPosition = new Vector3(0, 0, 0);
 
-// ------ FUNCTIONS
 
-// ------ LIFECYCLE & WATCHERS
+
+// ------ WATCHERS ------
+
+watch(isLoading, (loading) => {
+  if (loading) return;
+
+  apotekState.value?.scene.traverse((obj) => {
+    // make each object have its own material
+    if (obj instanceof Mesh) {
+      if (Array.isArray(obj.material)) {
+        obj.material = obj.material.map((mat) => mat.clone())
+
+        // console.log('material array:')
+        // for (const mat of obj.material) {
+        //   tresObjectInfo({ material: mat } as Mesh)
+        // }
+      }
+      else {
+        // obj.material = obj.material.clone()
+        // tresObjectInfo(obj)
+      }
+    }
+  })
+})
+
+// ------ LIFECYCLE ------
 
 onBeforeRender(() => {
   const cam = camera.activeCamera.value;
@@ -67,6 +105,11 @@ onMounted(async () => {
   // console.log('world position:', worldPosition.toArray().join(', '))
 })
 
+
+const gui = new GUI()
+usePointLightGui(gui, pointLightRef, pointLightHelperRef)
+useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
+
 // const interactiveMeshes = computed(() => {
 //   const meshes = Object.values(apotekNodes.value).filter(
 //     object => object instanceof Mesh
@@ -76,44 +119,17 @@ onMounted(async () => {
 
 //   return meshes
 // })
-
-watch(isLoading, (loading) => {
-  if (loading) return;
-
-  apotekState.value?.scene.traverse((obj) => {
-    // make each object have its own material
-    if (obj instanceof Mesh) {
-      if (Array.isArray(obj.material)) {
-        obj.material = obj.material.map((mat) => mat.clone())
-
-        // console.log('material array:')
-        // for (const mat of obj.material) {
-        //   tresObjectInfo({ material: mat } as Mesh)
-        // }
-      }
-      else {
-        // obj.material = obj.material.clone()
-        // tresObjectInfo(obj)
-      }
-    }
-  })
-})
 </script>
 
 <template>
+  <!-- ------ CAMERA ------ -->
   <TresPerspectiveCamera
     :position="initialCameraPosition"
   />
 
-  <TresAmbientLight
-    :intensity=".1"
-    color="white"
-  />
-  <TresPointLight
-    :position="new Vector3(5, 1, 10)"
-    :intensity="100"
-  />
-<!--
+
+  <!-- ------ LOAD GLB ------ -->
+  <!--
   <primitive
     v-for="mesh in interactiveMeshes"
     :key="mesh.uuid"
@@ -124,16 +140,40 @@ watch(isLoading, (loading) => {
 
   <primitive v-if="!isLoading" :object="apotekState?.scene" />
 
+  <!-- ------ LIGHTS ------ -->
+
+  <TresAmbientLight
+    :intensity=".1"
+    color="white"
+  />
+
+  <TresPointLight
+    ref="pointLightRef"
+    :position="new Vector3(5, 1, 10)"
+    :intensity="100"
+  />
+
+  <TresPointLightHelper
+    v-if="pointLightRef"
+    ref="pointLightHelperRef"
+    :args="[pointLightRef, 1, 0xff0000]"
+  />
+
   <TresDirectionalLight
+    ref="directionLightRef"
+    v-light-helper
     :position="new Vector3(0, 2, 5)"
     :lookAt="initialLookAtPosition"
     :intensity="1"
   />
-  <!-- <TresDirectionalLight
-    :position="new Vector3(0, 10, 10)"
-    :lookAt="initialLookAtPosition"
-    :intensity="1"
-  /> -->
+
+  <TresDirectionalLightHelper
+    v-if="directionLightRef"
+    ref="directionLightHelperRef"
+    :args="[directionLightRef, 1, 0x00ff00]"
+  />
+
+  <!-- ------ HELPERS ------ -->
 
   <TresAxesHelper />
   <TresGridHelper :args="[10, 10]" />
