@@ -8,7 +8,14 @@ import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 import { OrbitControls, useGLTF } from '@tresjs/cientos'
 import { useLoop, useTresContext } from '@tresjs/core'
 
-import { Vector3, Mesh, PointLight, DirectionalLight, PointLightHelper, DirectionalLightHelper } from 'three'
+import {
+  Vector3,
+  Mesh,
+  type PointLight,
+  type DirectionalLight,
+  type PointLightHelper,
+  type DirectionalLightHelper
+} from 'three'
 
 import { toFixedNumber, tresObjectInfo } from '@/js/util'
 import type { RotationDegrees } from '@/js/localTypes'
@@ -17,23 +24,17 @@ import { usePointLightGui } from '@/scenes/usePointLightGui'
 import { useDirectionalLightGui } from '@/scenes/useDirectionalLightGui'
 
 import { giveAllMeshesOwnMaterial } from '@/scenes/apotekHelpers'
+import { useMeshDebugger } from '@/scenes/useMeshDebugger'
 
 import GUI from 'lil-gui'
-
-// ------ REF ------
-
-const controls = ref<any>(null)
-
-const pointLightRef = ref<PointLight | null>(null)
-const pointLightHelperRef = ref<PointLightHelper | null>(null)
-
-  const directionLightRef = ref<DirectionalLight | null>(null)
-    const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
 
 // ------ SETUP ------
 
 const emit = defineEmits<{
-  position: [{ position: Vector3, rotation: RotationDegrees }],
+  position: [{
+    position: Vector3,
+    rotation: RotationDegrees
+  }],
 }>();
 
 const {
@@ -47,7 +48,26 @@ const { onBeforeRender } = useLoop();
 const initialCameraPosition = new Vector3(0, 8, 15.05);
 const initialLookAtPosition = new Vector3(0, 0, 0);
 
+// ------ REFS ------
+
+const controls = ref<any>(null)
+
+const pointLightRef = ref<PointLight | null>(null)
+const pointLightHelperRef = ref<PointLightHelper | null>(null)
+
+const directionLightRef = ref<DirectionalLight | null>(null)
+const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
+
 // ------ WATCHERS ------
+
+useMeshDebugger(
+  () => apotekState.value?.scene,
+  {
+    enabled: import.meta.env.DEV,
+    boxColor: 0xffff00,
+    markerColor: 0xff3333,
+  },
+)
 
 watch(isLoading, (loading) => {
   if (loading || !apotekState.value?.scene) return;
@@ -60,7 +80,7 @@ watch(isLoading, (loading) => {
 
   scene.traverse((obj) => {
     if (obj instanceof THREE.Mesh) {
-      if (obj.parent?.name !== lastParentName)  {
+      if (obj.parent?.name !== lastParentName) {
         console.log('---', obj.parent?.name, '---')
         lastParentName = obj.parent?.name || '';
       }

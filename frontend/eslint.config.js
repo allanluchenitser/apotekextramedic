@@ -26,6 +26,7 @@ export default tresLintConfig({
     'style/no-tabs': 'off',
     'style/indent': 'off',
     'style/space-in-parens': 'off',
+    'style/no-multiple-empty-lines': 'off',
 
     'style/quotes': 'off',
     'style/arrow-parens': 'off',
@@ -34,6 +35,8 @@ export default tresLintConfig({
     'style/comma-dangle': 'off',
     'style/padded-blocks': 'off',
     'style/brace-style': 'off',
+
+    'style/operator-linebreak': 'off',
 
     'vue/block-tag-newline': 'off',
     'vue/multiline-html-element-content-newline': 'off',
