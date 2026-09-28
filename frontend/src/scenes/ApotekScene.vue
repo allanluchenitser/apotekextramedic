@@ -1,5 +1,7 @@
 <script setup lang="ts">
+
 import { nextTick, onMounted, ref, watch, computed } from 'vue'
+import * as THREE from 'three'
 
 import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
 
@@ -13,6 +15,8 @@ import type { RotationDegrees } from '@/js/localTypes'
 
 import { usePointLightGui } from '@/scenes/usePointLightGui'
 import { useDirectionalLightGui } from '@/scenes/useDirectionalLightGui'
+
+import { giveAllMeshesOwnMaterial } from '@/scenes/apotekHelpers'
 
 import GUI from 'lil-gui'
 
@@ -43,28 +47,36 @@ const { onBeforeRender } = useLoop();
 const initialCameraPosition = new Vector3(0, 8, 15.05);
 const initialLookAtPosition = new Vector3(0, 0, 0);
 
-
-
 // ------ WATCHERS ------
 
 watch(isLoading, (loading) => {
-  if (loading) return;
+  if (loading || !apotekState.value?.scene) return;
 
-  apotekState.value?.scene.traverse((obj) => {
-    // make each object have its own material
-    if (obj instanceof Mesh) {
-      if (Array.isArray(obj.material)) {
-        obj.material = obj.material.map((mat) => mat.clone())
+  const scene = apotekState.value.scene;
 
-        // console.log('material array:')
-        // for (const mat of obj.material) {
-        //   tresObjectInfo({ material: mat } as Mesh)
-        // }
+  giveAllMeshesOwnMaterial(scene);
+
+  let lastParentName = '';
+
+  scene.traverse((obj) => {
+    if (obj instanceof THREE.Mesh) {
+      if (obj.parent?.name !== lastParentName)  {
+        console.log('---', obj.parent?.name, '---')
+        lastParentName = obj.parent?.name || '';
       }
       else {
-        // obj.material = obj.material.clone()
-        // tresObjectInfo(obj)
+        console.log(obj.name);
       }
+      const materials = Array.isArray(obj.material)
+        ? obj.material
+        : [obj.material]
+
+      materials.forEach((material) => {
+        if ('normalMap' in material) {
+          material.normalMap = null
+          material.needsUpdate = true
+        }
+      })
     }
   })
 })
@@ -143,11 +155,11 @@ useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
   <!-- ------ LIGHTS ------ -->
 
   <TresAmbientLight
-    :intensity=".1"
+    :intensity=".5"
     color="white"
   />
 
-  <TresPointLight
+  <!-- <TresPointLight
     ref="pointLightRef"
     :position="new Vector3(5, 1, 10)"
     :intensity="100"
@@ -157,14 +169,14 @@ useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
     v-if="pointLightRef"
     ref="pointLightHelperRef"
     :args="[pointLightRef, 1, 0xff0000]"
-  />
+  /> -->
 
   <TresDirectionalLight
     ref="directionLightRef"
     v-light-helper
-    :position="new Vector3(0, 2, 5)"
-    :lookAt="initialLookAtPosition"
-    :intensity="1"
+    :position="new Vector3(0, 8, 20)"
+    :lookAt="new Vector3(0, 8, 0)"
+    :intensity="3"
   />
 
   <TresDirectionalLightHelper
