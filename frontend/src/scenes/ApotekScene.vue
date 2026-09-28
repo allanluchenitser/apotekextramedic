@@ -45,12 +45,13 @@ const {
 const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
 
-const initialCameraPosition = new Vector3(8.30,
-3.45,
-13.37)
-const initialLookAtPosition = new Vector3(-0.08,
-2.81,
-4.34)
+const initialCameraPosition = new Vector3(8.40,
+0.97,
+13.32)
+
+const initialLookAtPosition = new Vector3(0.00,
+3.47,
+4.64)
 
 // ------ REFS ------
 

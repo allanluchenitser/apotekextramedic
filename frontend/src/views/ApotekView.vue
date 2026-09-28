@@ -10,12 +10,7 @@ import ApotekScene from '@/scenes/ApotekScene.vue'
 import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
-
-const DEBUG = {
-  showCoordinates: true,
-  showMeshPicker: true,
-  showLilGui: true,
-}
+import { DEBUG } from '@/views/apotekConfig'
 
 const position = ref<{
   position: Vector3,
