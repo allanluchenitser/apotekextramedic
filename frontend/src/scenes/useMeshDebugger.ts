@@ -94,7 +94,7 @@ export function useMeshDebugger(
   /*
    * HTML debug display.
    */
-  let panel: HTMLDivElement | null = null
+  let panelEl: HTMLDivElement | null = null
   let statusElement: HTMLDivElement | null = null
   let outputElement: HTMLPreElement | null = null
 
@@ -139,10 +139,10 @@ export function useMeshDebugger(
       .join('\n          ')
   }
 
-  function formatNumber(value: number | undefined) {
-    if (value === undefined) return '—'
-    return value.toFixed(3)
-  }
+  // function formatNumber(value: number | undefined) {
+  //   if (value === undefined) return '—'
+  //   return value.toFixed(3)
+  // }
 
   function updatePanel(
     hit: Intersection<Object3D>,
@@ -155,19 +155,19 @@ export function useMeshDebugger(
       mesh.parent?.type ||
       '(no parent)'
 
-    const worldPosition = mesh.getWorldPosition(
-      hitMarker.position.clone(),
-    )
+    // const worldPosition = mesh.getWorldPosition(
+    //   hitMarker.position.clone(),
+    // )
 
-    const uv = hit.uv
+    // const uv = hit.uv
 
     outputElement.textContent = [
+      `Parent:    ${parentName}`,
       `Name:      ${mesh.name || '(unnamed mesh)'}`,
       `Type:      ${mesh.type}`,
-      `UUID:      ${mesh.uuid}`,
-      `Parent:    ${parentName}`,
+      // `UUID:      ${mesh.uuid}`,
       '',
-      `Geometry:  ${mesh.geometry.type}`,
+      // `Geometry:  ${mesh.geometry.type}`,
       `Triangles: ${mesh.geometry.index
         ? mesh.geometry.index.count / 3
         : mesh.geometry.attributes.position.count / 3}`,
@@ -175,12 +175,12 @@ export function useMeshDebugger(
       '',
       `Material:  ${materialDescription(mesh.material)}`,
       '',
-      `Hit point: ${formatNumber(hit.point.x)}, ${formatNumber(hit.point.y)}, ${formatNumber(hit.point.z)}`,
-      `Mesh pos:  ${formatNumber(worldPosition.x)}, ${formatNumber(worldPosition.y)}, ${formatNumber(worldPosition.z)}`,
-      `UV:        ${uv
-        ? `${formatNumber(uv.x)}, ${formatNumber(uv.y)}`
-        : '—'}`,
-      `Distance:  ${formatNumber(hit.distance)}`,
+      // `Hit point: ${formatNumber(hit.point.x)}, ${formatNumber(hit.point.y)}, ${formatNumber(hit.point.z)}`,
+      // `Mesh pos:  ${formatNumber(worldPosition.x)}, ${formatNumber(worldPosition.y)}, ${formatNumber(worldPosition.z)}`,
+      // `UV:        ${uv
+      //   ? `${formatNumber(uv.x)}, ${formatNumber(uv.y)}`
+      //   : '—'}`,
+      // `Distance:  ${formatNumber(hit.distance)}`,
     ].join('\n')
 
     updateStatus()
@@ -371,12 +371,12 @@ export function useMeshDebugger(
   }
 
   function createPanel() {
-    panel = document.createElement('div')
+    panelEl = document.createElement('div')
 
-    Object.assign(panel.style, {
+    Object.assign(panelEl.style, {
       position: 'fixed',
-      top: '12px',
-      right: '12px',
+      bottom: '12px',
+      left: '12px',
       zIndex: '10000',
       width: '360px',
       maxWidth: 'calc(100vw - 24px)',
@@ -423,13 +423,13 @@ export function useMeshDebugger(
       lineHeight: '1.45',
     })
 
-    panel.append(
+    panelEl.append(
       title,
       statusElement,
       outputElement,
     )
 
-    document.body.appendChild(panel)
+    document.body.appendChild(panelEl)
 
     updateStatus()
   }
@@ -501,9 +501,9 @@ export function useMeshDebugger(
     markerGeometry.dispose()
     markerMaterial.dispose()
 
-    panel?.remove()
+    panelEl?.remove()
 
-    panel = null
+    panelEl = null
     statusElement = null
     outputElement = null
   })

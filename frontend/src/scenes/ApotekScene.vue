@@ -25,7 +25,6 @@ import { useDirectionalLightGui } from '@/scenes/useDirectionalLightGui'
 
 import { giveAllMeshesOwnMaterial } from '@/scenes/apotekHelpers'
 import { useMeshDebugger } from '@/scenes/useMeshDebugger'
-
 import GUI from 'lil-gui'
 
 // ------ SETUP ------
@@ -33,7 +32,8 @@ import GUI from 'lil-gui'
 const emit = defineEmits<{
   position: [{
     position: Vector3,
-    rotation: RotationDegrees
+    rotation: RotationDegrees,
+    lookAt: Vector3,
   }],
 }>();
 
@@ -45,8 +45,12 @@ const {
 const { camera } = useTresContext();
 const { onBeforeRender } = useLoop();
 
-const initialCameraPosition = new Vector3(0, 8, 15.05);
-const initialLookAtPosition = new Vector3(0, 0, 0);
+const initialCameraPosition = new Vector3(8.30,
+3.45,
+13.37)
+const initialLookAtPosition = new Vector3(-0.08,
+2.81,
+4.34)
 
 // ------ REFS ------
 
@@ -60,14 +64,14 @@ const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
 
 // ------ WATCHERS ------
 
-useMeshDebugger(
-  () => apotekState.value?.scene,
-  {
-    enabled: import.meta.env.DEV,
-    boxColor: 0xffff00,
-    markerColor: 0xff3333,
-  },
-)
+// useMeshDebugger(
+//   () => apotekState.value?.scene,
+//   {
+//     enabled: import.meta.env.DEV,
+//     boxColor: 0xffff00,
+//     markerColor: 0xff3333,
+//   },
+// )
 
 watch(isLoading, (loading) => {
   if (loading || !apotekState.value?.scene) return;
@@ -121,10 +125,14 @@ onBeforeRender(() => {
 
   const pos = new Vector3(px, py, pz);
   const rot: RotationDegrees = { x: ex, y: ey, z: ez };
+  const look = controls.value?.instance?.target;
+
+  // console.log('look', look)
 
   emit('position', {
     position: pos,
-    rotation: rot
+    rotation: rot,
+    lookAt: look,
   });
 });
 
@@ -138,9 +146,9 @@ onMounted(async () => {
 })
 
 
-const gui = new GUI()
-usePointLightGui(gui, pointLightRef, pointLightHelperRef)
-useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
+// const gui = new GUI()
+// usePointLightGui(gui, pointLightRef, pointLightHelperRef)
+// useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
 
 // const interactiveMeshes = computed(() => {
 //   const meshes = Object.values(apotekNodes.value).filter(
@@ -199,16 +207,16 @@ useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
     :intensity="3"
   />
 
-  <TresDirectionalLightHelper
+  <!-- <TresDirectionalLightHelper
     v-if="directionLightRef"
     ref="directionLightHelperRef"
     :args="[directionLightRef, 1, 0x00ff00]"
-  />
+  /> -->
 
   <!-- ------ HELPERS ------ -->
 
-  <TresAxesHelper />
-  <TresGridHelper :args="[10, 10]" />
+<!--   <TresAxesHelper />
+  <TresGridHelper :args="[10, 10]" /> -->
 
   <OrbitControls
     ref="controls"

@@ -11,12 +11,20 @@ import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
 
+const DEBUG = {
+  showCoordinates: true,
+  showMeshPicker: true,
+  showLilGui: true,
+}
+
 const position = ref<{
   position: Vector3,
-  rotation: RotationDegrees
+  rotation: RotationDegrees,
+  lookAt: Vector3,
 }>({
   position: new Vector3(0, 0, 0),
-  rotation: { x: 0, y: 0, z: 0 }
+  rotation: { x: 0, y: 0, z: 0 },
+  lookAt: new Vector3(0, 0, 0),
 });
 
 </script>
@@ -34,7 +42,7 @@ const position = ref<{
           <ApotekScene @position="position = $event" />
         <!-- </TresFog> -->
         </TresCanvas>
-        <DisplayCoordinates :position="position" />
+        <DisplayCoordinates v-if="DEBUG.showCoordinates" :position="position" />
       </div>
     </div>
   </div>
