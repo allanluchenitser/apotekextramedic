@@ -12,6 +12,8 @@ import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
 import { TresCanvas } from '@tresjs/core'
 import { DEBUG } from '@/views/apotekConfig'
 
+// const dpr = Math.min(window.devicePixelRatio, 2)
+
 const position = ref<{
   position: Vector3,
   rotation: RotationDegrees,
@@ -32,9 +34,11 @@ const position = ref<{
         <TresCanvas
           alpha
           :clear-alpha="0"
+          render-mode="on-demand"
         >
         <!-- <TresFog :color="0xFFFFFF" :near="50" :far="100"> -->
           <ApotekScene @position="position = $event" />
+          <!-- <ApotekScene /> -->
         <!-- </TresFog> -->
         </TresCanvas>
         <DisplayCoordinates v-if="DEBUG.showCoordinates" :position="position" />

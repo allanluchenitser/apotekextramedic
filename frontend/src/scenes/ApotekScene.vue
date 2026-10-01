@@ -1,6 +1,6 @@
 <script setup lang="ts">
 
-import { nextTick, onMounted, ref, watch, computed } from 'vue'
+import { nextTick, onMounted, ref, watch, computed, watchEffect } from 'vue'
 import * as THREE from 'three'
 
 import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
@@ -42,16 +42,22 @@ const {
   isLoading
 } = useGLTF(apotekGlbUrl);
 
-const { camera } = useTresContext();
+const { camera, renderer } = useTresContext();
+
+
 const { onBeforeRender } = useLoop();
 
-const initialCameraPosition = new Vector3(8.40,
-0.97,
-13.32)
+const initialCameraPosition = new Vector3(10.51,
+1.19,
+15.16
+)
 
-const initialLookAtPosition = new Vector3(0.00,
-3.47,
-4.64)
+const initialLookAtPosition = new Vector3(1.11,
+2.94,
+3.43)
+
+const directionalLightPosition = new Vector3(0, 8, 20);
+const directionalLightLookAt = new Vector3(0, 8, 0);
 
 // ------ REFS ------
 
@@ -74,40 +80,49 @@ const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
 //   },
 // )
 
-watch(isLoading, (loading) => {
-  if (loading || !apotekState.value?.scene) return;
+// watchEffect(() => {
+//   console.log(
+//     'mode:', renderer.mode,
+//     'canBeInvalidated:', renderer.canBeInvalidated.value,
+//     'loop active:', renderer.loop.isActive.value,
+//   )
+// })
 
-  const scene = apotekState.value.scene;
+// watch(isLoading, (loading) => {
+//   if (loading || !apotekState.value?.scene) return;
 
-  giveAllMeshesOwnMaterial(scene);
+//   const scene = apotekState.value.scene;
 
-  let lastParentName = '';
+//   giveAllMeshesOwnMaterial(scene);
 
-  scene.traverse((obj) => {
-    if (obj instanceof THREE.Mesh) {
-      if (obj.parent?.name !== lastParentName) {
-        console.log('---', obj.parent?.name, '---')
-        lastParentName = obj.parent?.name || '';
-      }
-      else {
-        console.log(obj.name);
-      }
-      const materials = Array.isArray(obj.material)
-        ? obj.material
-        : [obj.material]
+//   let lastParentName = '';
 
-      materials.forEach((material) => {
-        if ('normalMap' in material) {
-          material.normalMap = null
-          material.needsUpdate = true
-        }
-      })
-    }
-  })
-})
+//   scene.traverse((obj) => {
+//     if (obj instanceof THREE.Mesh) {
+//       if (obj.parent?.name !== lastParentName) {
+//         // console.log('---', obj.parent?.name, '---')
+//         lastParentName = obj.parent?.name || '';
+//       }
+//       else {
+//         // console.log(obj.name);
+//       }
+//       const materials = Array.isArray(obj.material)
+//         ? obj.material
+//         : [obj.material]
+
+//       materials.forEach((material) => {
+//         if ('normalMap' in material) {
+//           material.normalMap = null
+//           material.needsUpdate = true
+//         }
+//       })
+//     }
+//   })
+// })
 
 // ------ LIFECYCLE ------
 
+// RAF loop
 onBeforeRender(() => {
   const cam = camera.activeCamera.value;
 
@@ -135,7 +150,14 @@ onBeforeRender(() => {
     rotation: rot,
     lookAt: look,
   });
+
+  console.log('render loop');
 });
+
+// post Render callback. Not the same as RAF loop
+renderer.onRender(() => {
+  console.count('ACTUAL RENDER')
+})
 
 onMounted(async () => {
   await nextTick();
@@ -170,14 +192,12 @@ onMounted(async () => {
 
 
   <!-- ------ LOAD GLB ------ -->
-  <!--
-  <primitive
+
+  <!-- <primitive
     v-for="mesh in interactiveMeshes"
     :key="mesh.uuid"
     :object="mesh"
-    @pointerenter="handlePointerEnter"
-    @pointerleave="handlePointerLeave"
-  />  -->
+  /> -->
 
   <primitive v-if="!isLoading" :object="apotekState?.scene" />
 
@@ -202,9 +222,8 @@ onMounted(async () => {
 
   <TresDirectionalLight
     ref="directionLightRef"
-    v-light-helper
-    :position="new Vector3(0, 8, 20)"
-    :lookAt="new Vector3(0, 8, 0)"
+    :position="directionalLightPosition"
+    :lookAt="directionalLightLookAt"
     :intensity="3"
   />
 
