@@ -80,14 +80,6 @@ const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
 //   },
 // )
 
-// watchEffect(() => {
-//   console.log(
-//     'mode:', renderer.mode,
-//     'canBeInvalidated:', renderer.canBeInvalidated.value,
-//     'loop active:', renderer.loop.isActive.value,
-//   )
-// })
-
 // watch(isLoading, (loading) => {
 //   if (loading || !apotekState.value?.scene) return;
 
@@ -208,30 +200,12 @@ onMounted(async () => {
     color="white"
   />
 
-  <!-- <TresPointLight
-    ref="pointLightRef"
-    :position="new Vector3(5, 1, 10)"
-    :intensity="100"
-  />
-
-  <TresPointLightHelper
-    v-if="pointLightRef"
-    ref="pointLightHelperRef"
-    :args="[pointLightRef, 1, 0xff0000]"
-  /> -->
-
   <TresDirectionalLight
     ref="directionLightRef"
     :position="directionalLightPosition"
     :lookAt="directionalLightLookAt"
     :intensity="3"
   />
-
-  <!-- <TresDirectionalLightHelper
-    v-if="directionLightRef"
-    ref="directionLightHelperRef"
-    :args="[directionLightRef, 1, 0x00ff00]"
-  /> -->
 
   <!-- ------ HELPERS ------ -->
 

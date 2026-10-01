@@ -23,6 +23,7 @@ import ThreeView from '@/views/threeview/ThreeView.vue'
       <router-link to="/three">three</router-link>
       <router-link to="/practice">practice</router-link>
       <router-link to="/ortho">ortho</router-link>
+      <router-link to="/physics">physics</router-link>
     </nav>
     <router-view></router-view>
   </main>

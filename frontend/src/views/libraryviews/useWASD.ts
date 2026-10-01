@@ -1,0 +1,58 @@
+import { onMounted, onUnmounted, reactive } from 'vue'
+
+export function useWASD() {
+  const keys = reactive({
+    forward: false,
+    backward: false,
+    left: false,
+    right: false,
+  })
+
+  function keyDown(e: KeyboardEvent) {
+    switch (e.code) {
+      case 'KeyW':
+        keys.forward = true
+        break
+      case 'KeyS':
+        keys.backward = true
+        break
+      case 'KeyA':
+        keys.left = true
+        break
+      case 'KeyD':
+        keys.right = true
+        break
+    }
+  }
+
+  function keyUp(e: KeyboardEvent) {
+    switch (e.code) {
+      case 'KeyW':
+        keys.forward = false
+        break
+      case 'KeyS':
+        keys.backward = false
+        break
+      case 'KeyA':
+        keys.left = false
+        break
+      case 'KeyD':
+        keys.right = false
+        break
+    }
+  }
+
+  onMounted(() => {
+    window.addEventListener('keydown', keyDown)
+    window.addEventListener('keyup', keyUp)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener('keydown', keyDown)
+    window.removeEventListener('keyup', keyUp)
+  })
+
+  return {
+    keys,
+  }
+}
