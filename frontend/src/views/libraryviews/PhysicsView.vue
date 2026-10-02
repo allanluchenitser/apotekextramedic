@@ -7,12 +7,29 @@ import PlayerController from './PlayerController.vue'
 
 import { ref } from 'vue'
 
-const positionBoxOne = ref<Vector3>(new Vector3(0, -0.25, 0))
-const positionBoxTwo = ref<Vector3>(new Vector3(0, 1.5, -4))
+const positionFloor = ref<Vector3>(new Vector3(0, -0.25, 0))
+const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
 </script>
 
 <template>
   <div class="physics-view">
+    <div class="
+      crosshairs
+      absolute top-1/2 left-1/2
+      transform -translate-x-1/2 -translate-y-1/2
+      z-50
+    ">
+      <div
+        class="
+          absolute top-1/2 left-1/2
+          transform -translate-x-1/2 -translate-y-1/2
+          w-3 h-3 bg-white
+          rounded-full
+          flex items-center justify-center
+      ">
+        +
+      </div>
+    </div>
     <TresCanvas alpha :clear-alpha="0">
       <TresAmbientLight :intensity="1" />
 
@@ -22,16 +39,16 @@ const positionBoxTwo = ref<Vector3>(new Vector3(0, 1.5, -4))
 
           <!-- floor -->
           <RigidBody type="fixed">
-            <TresMesh :position="positionBoxOne">
+            <TresMesh :position="positionFloor">
               <TresBoxGeometry :args="[20, 0.5, 20]" />
-              <TresMeshStandardMaterial color="#888888" />
+              <TresMeshStandardMaterial color="#888888" :opacity="0.5" transparent />
             </TresMesh>
           </RigidBody>
 
           <!-- wall -->
           <RigidBody type="fixed">
-            <TresMesh :position="positionBoxTwo">
-              <TresBoxGeometry :args="[8, 3, 0.5]" />
+            <TresMesh :position="positionWall">
+              <TresBoxGeometry :args="[8, 50, 0.5]" />
               <TresMeshStandardMaterial color="#aa7777" />
             </TresMesh>
           </RigidBody>
