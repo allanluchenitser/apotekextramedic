@@ -27,6 +27,8 @@ export function usePlayerMovement(
   const up = new Vector3(0, 1, 0)
 
   onBeforeStep((dt) => {
+    console.log('before step')
+
     const _speed = keys.shift
       ? speed * 2.5
       : speed
@@ -35,7 +37,15 @@ export function usePlayerMovement(
     const collider = colliderRef.value?.instance
     const cam = camera.activeCamera.value
 
-    if (!body || !collider || !cam) return
+    if (!body || !collider || !cam) {
+      console.warn('Missing body, collider, or camera')
+      console.log({
+        player: !!bodyRef.value,
+        colliderRef: !!colliderRef.value,
+        colliderInstance: !!colliderRef.value?.instance,
+      })
+      return
+    }
 
     movement.set(0, 0, 0)
 
@@ -54,17 +64,15 @@ export function usePlayerMovement(
     if (keys.right) movement.add(right)
     if (keys.left) movement.sub(right)
 
-    if (movement.lengthSq() === 0) return
+    if (movement.lengthSq() === 0) {
+      return
+    }
 
     // Prevent W+D from being faster than W alone.
     movement.normalize().multiplyScalar(_speed * dt)
 
     // Ask Rapier how much of that movement is legal.
-    controller.computeColliderMovement(collider, {
-      x: movement.x,
-      y: movement.y,
-      z: movement.z,
-    })
+    controller.computeColliderMovement(collider, movement);
 
     const corrected = controller.computedMovement()
     const current = body.translation()

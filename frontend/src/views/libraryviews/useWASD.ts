@@ -10,6 +10,7 @@ export function useWASD() {
   })
 
   function keyDown(e: KeyboardEvent) {
+    console.log('keydown', e.code)
     switch (e.code) {
       case 'KeyW':
         keys.forward = true
@@ -31,6 +32,7 @@ export function useWASD() {
   }
 
   function keyUp(e: KeyboardEvent) {
+    console.log('keyup', e.code)
     switch (e.code) {
       case 'KeyW':
         keys.forward = false
