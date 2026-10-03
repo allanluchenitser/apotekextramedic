@@ -43,6 +43,7 @@ export default tresLintConfig({
     'vue/prefer-separate-static-class': 'off',
     'vue/html-indent': 'off',
     'vue/html-self-closing': 'off',
-    'vue/attributes-order': 'off'
+    'vue/attributes-order': 'off',
+    'vue/first-attribute-linebreak': 'off'
   },
 })

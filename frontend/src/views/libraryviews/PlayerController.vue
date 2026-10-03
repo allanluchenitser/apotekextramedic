@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { shallowRef, onMounted, watchEffect } from 'vue'
-import { Vector3 } from 'three'
 
+import { Vector3 } from 'three'
 import { PointerLockControls } from '@tresjs/cientos'
-// import { PointerLockControls } from 'three/addons/controls/PointerLockControls.js'
+
+import { usePlayerMovement } from './usePlayerMovement'
 
 import {
   CapsuleCollider,
@@ -19,8 +20,10 @@ type PointerControlsHandle = {
   } | null
 }
 
-const player = shallowRef<ExposedRigidBody | null>(null)
+const playerRef = shallowRef<ExposedRigidBody | null>(null)
 const cameraPosition = shallowRef<Vector3>(new Vector3(0, 0.65, 0))
+const capsuleColliderRef = shallowRef(null)
+
 const pointerLockControls = shallowRef<PointerControlsHandle | null>(null)
 
 watchEffect(() => {
@@ -29,19 +32,24 @@ watchEffect(() => {
 
   controls.minPolarAngle = Math.PI / 4
   controls.maxPolarAngle = 5 * Math.PI / 8
-  controls.pointerSpeed = .9
+  controls.pointerSpeed = 0.9
 })
+
+usePlayerMovement(playerRef, capsuleColliderRef, 5)
 
 </script>
 
 <template>
   <RigidBody
-    ref="player"
+    ref="playerRef"
     type="kinematic"
     :collider="false"
     :position="[0, 1, 4]"
   >
-    <CapsuleCollider :args="[0.65, 0.35]" />
+    <CapsuleCollider
+      ref="capsuleColliderRef"
+      :args="[0.65, 0.35]"
+    />
 
     <TresPerspectiveCamera
       :position="cameraPosition"

@@ -27,6 +27,10 @@ export function usePlayerMovement(
   const up = new Vector3(0, 1, 0)
 
   onBeforeStep((dt) => {
+    const _speed = keys.shift
+      ? speed * 2.5
+      : speed
+
     const body = bodyRef.value?.instance
     const collider = colliderRef.value?.instance
     const cam = camera.activeCamera.value
@@ -53,10 +57,7 @@ export function usePlayerMovement(
     if (movement.lengthSq() === 0) return
 
     // Prevent W+D from being faster than W alone.
-    movement.normalize()
-
-    // meters/sec × seconds
-    movement.multiplyScalar(speed * dt)
+    movement.normalize().multiplyScalar(_speed * dt)
 
     // Ask Rapier how much of that movement is legal.
     controller.computeColliderMovement(collider, {

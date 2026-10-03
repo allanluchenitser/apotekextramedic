@@ -13,12 +13,11 @@ const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
 
 <template>
   <div class="physics-view">
-    <div class="
-      crosshairs
+    <div class="crosshairs
       absolute top-1/2 left-1/2
       transform -translate-x-1/2 -translate-y-1/2
-      z-50
-    ">
+      z-50"
+    >
       <div
         class="
           absolute top-1/2 left-1/2

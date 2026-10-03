@@ -6,6 +6,7 @@ export function useWASD() {
     backward: false,
     left: false,
     right: false,
+    shift: false,
   })
 
   function keyDown(e: KeyboardEvent) {
@@ -21,6 +22,10 @@ export function useWASD() {
         break
       case 'KeyD':
         keys.right = true
+        break
+      case 'ShiftLeft':
+      case 'ShiftRight':
+        keys.shift = true
         break
     }
   }
@@ -38,6 +43,10 @@ export function useWASD() {
         break
       case 'KeyD':
         keys.right = false
+        break
+      case 'ShiftLeft':
+      case 'ShiftRight':
+        keys.shift = false
         break
     }
   }
