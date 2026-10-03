@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, onMounted, watchEffect, watch } from 'vue'
+import { shallowRef, watch } from 'vue'
 
 import { Vector3 } from 'three'
 import { PointerLockControls } from '@tresjs/cientos'

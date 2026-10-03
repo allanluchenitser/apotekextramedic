@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { Physics, RigidBody } from '@tresjs/rapier'
-
+import { ref } from 'vue'
 import { Vector3 } from 'three'
 import { TresCanvas } from '@tresjs/core'
-import PlayerController from './PlayerController.vue'
 
-import { ref } from 'vue'
+import { Physics, RigidBody } from '@tresjs/rapier'
+
+import PlayerController from './PlayerController.vue'
 
 const positionFloor = ref<Vector3>(new Vector3(0, -0.25, 0))
 const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
@@ -29,7 +29,10 @@ const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
         +
       </div>
     </div>
-    <TresCanvas alpha :clear-alpha="0">
+    <TresCanvas
+      alpha
+      :clear-alpha="0"
+    >
       <TresAmbientLight :intensity="1" />
 
       <Suspense>
