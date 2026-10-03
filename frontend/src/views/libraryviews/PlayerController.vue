@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { shallowRef, watch } from 'vue'
+import { shallowRef, watch, nextTick } from 'vue'
 
 import { Vector3 } from 'three'
 import { PointerLockControls } from '@tresjs/cientos'
@@ -37,6 +37,28 @@ watch(() => pointerLockControls.value?.instance, (controls) => {
   controls.maxPolarAngle = 5 * Math.PI / 8
   controls.pointerSpeed = 0.9
 });
+
+watch(
+  () => playerRef.value?.instance,
+  async (body) => {
+    if (!body) return;
+
+    await nextTick();
+
+    console.table(
+      Array.from({ length: body.numColliders() }, (_, index) => {
+        const collider = body.collider(index);
+        return {
+          index,
+          isSensor: collider.isSensor(),
+          shapeType: collider.shapeType(),
+          enabled: collider.isEnabled(),
+        }
+      })
+    )
+  },
+  { immediate: true, flush: 'post' }
+)
 
 </script>
 

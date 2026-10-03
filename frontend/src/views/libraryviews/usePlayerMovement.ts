@@ -27,7 +27,7 @@ export function usePlayerMovement(
   const up = new Vector3(0, 1, 0)
 
   onBeforeStep((dt) => {
-    console.log('before step')
+    // console.log('before step')
 
     const _speed = keys.shift
       ? speed * 2.5
@@ -75,6 +75,13 @@ export function usePlayerMovement(
     controller.computeColliderMovement(collider, movement);
 
     const corrected = controller.computedMovement()
+
+    console.log({
+      desired: movement.toArray(),
+      corrected: [corrected.x, corrected.y, corrected.z],
+      collisions: controller.numComputedCollisions(),
+    })
+
     const current = body.translation()
 
     body.setNextKinematicTranslation({
