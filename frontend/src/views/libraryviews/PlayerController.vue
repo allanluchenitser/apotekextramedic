@@ -7,6 +7,7 @@ import { Vector3 } from 'three'
 import { PointerLockControls } from '@tresjs/cientos'
 
 import { usePlayerMovement } from './usePlayerMovement'
+import useTresLoopDebug from '@/composables/useTresLoopDebug'
 
 import {
   Collider,
@@ -22,6 +23,9 @@ type PointerControlsHandle = {
     pointerSpeed: number
   } | null
 }
+
+useTresLoopDebug()
+
 
 const customerRef = shallowRef<ExposedRigidBody | null>(null);
 const customerColliderRef = shallowRef<ExposedCollider | null>(null)

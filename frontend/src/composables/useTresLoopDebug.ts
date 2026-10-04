@@ -1,6 +1,6 @@
 import { useTresContext, useLoop } from '@tresjs/core'
 
-export function useTresLoopDebug() {
+export default function useTresLoopDebug() {
   const { renderer } = useTresContext();
   const { onBeforeRender } = useLoop();
 

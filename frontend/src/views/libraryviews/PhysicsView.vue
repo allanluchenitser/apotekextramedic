@@ -58,7 +58,10 @@ watch(
         +
       </div>
     </div>
-    <TresCanvas :clear-alpha="0" alpha>
+    <TresCanvas
+      :clear-alpha="0"
+      alpha
+    >
       <TresAmbientLight :intensity="1" />
 
       <Suspense>
