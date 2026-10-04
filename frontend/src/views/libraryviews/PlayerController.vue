@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type * as THREE from 'three'
+
 import { shallowRef, watch, nextTick } from 'vue'
 
 import { Vector3 } from 'three'
@@ -21,14 +23,20 @@ type PointerControlsHandle = {
   } | null
 }
 
-const playerRef = shallowRef<ExposedRigidBody | null>(null);
-const capsuleColliderRef = shallowRef<ExposedCollider | null>(null)
+const customerRef = shallowRef<ExposedRigidBody | null>(null);
+const customerColliderRef = shallowRef<ExposedCollider | null>(null)
 
 const cameraPosition = shallowRef<Vector3>(new Vector3(0, 0.65, 0));
+const customerPOVCameraRef = shallowRef<THREE.Camera | null>(null)
 
 const pointerLockControls = shallowRef<PointerControlsHandle | null>(null)
 
-usePlayerMovement(playerRef, capsuleColliderRef, 5)
+usePlayerMovement({
+  bodyRef: customerRef,
+  colliderRef: customerColliderRef,
+  cameraRef: customerPOVCameraRef,
+  speed: 5,
+})
 
 watch(() => pointerLockControls.value?.instance, (controls) => {
   if (!controls) return
@@ -39,7 +47,7 @@ watch(() => pointerLockControls.value?.instance, (controls) => {
 });
 
 watch(
-  () => playerRef.value?.instance,
+  () => customerRef.value?.instance,
   async (body) => {
     if (!body) return;
 
@@ -64,18 +72,20 @@ watch(
 
 <template>
   <RigidBody
-    ref="playerRef"
+    ref="customerRef"
     type="kinematic"
     :collider="false"
     :position="[0, 1, 4]"
   >
     <Collider
       shape="capsule"
-      ref="capsuleColliderRef"
+      ref="customerColliderRef"
+      :position="[0, 0, 0]"
       :args="[0.65, 0.35]"
     />
 
     <TresPerspectiveCamera
+      ref="customerPOVCameraRef"
       :position="cameraPosition"
       :fov="60"
     />

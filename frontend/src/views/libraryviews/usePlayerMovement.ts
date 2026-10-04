@@ -1,3 +1,5 @@
+import type * as THREE from 'three'
+
 import { onUnmounted, type ShallowRef } from 'vue'
 import { Vector3 } from 'three'
 import { useTresContext } from '@tresjs/core'
@@ -8,11 +10,19 @@ import {
 
 import { useWASD } from './useWASD'
 
-export function usePlayerMovement(
+type UsePlayerMovementParams = {
   bodyRef: ShallowRef<ExposedRigidBody | null>,
   colliderRef: ShallowRef<any>,
+  cameraRef: ShallowRef<THREE.Camera | null>,
+  speed?: number,
+}
+
+export function usePlayerMovement({
+  bodyRef,
+  colliderRef,
+  cameraRef,
   speed = 3,
-) {
+}: UsePlayerMovementParams) {
   const { keys } = useWASD()
 
   const { camera } = useTresContext()
@@ -35,7 +45,7 @@ export function usePlayerMovement(
 
     const body = bodyRef.value?.instance
     const collider = colliderRef.value?.instance
-    const cam = camera.activeCamera.value
+    const cam = cameraRef.value || camera.activeCamera.value
 
     if (!body || !collider || !cam) {
       console.warn('Missing body, collider, or camera')
