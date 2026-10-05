@@ -1,28 +1,28 @@
 <!-- @strictTemplates false -->
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { Vector3 } from 'three'
-import type { RotationDegrees } from '@/js/localTypes'
+// import { ref } from 'vue'
+// import { Vector3 } from 'three'
+// import type { RotationDegrees } from '@/js/localTypes'
 
 import GoogleSideBar from '@/sharedComponents/GoogleSideBar.vue'
 import ApotekScene from '@/scenes/ApotekScene.vue'
-import DisplayCoordinates from '@/sharedComponents/DisplayCoordinates.vue';
+// import DisplayCoordinates from '@/sharedComponents/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
-import { DEBUG } from '@/views/apotekConfig'
+// import { DEBUG } from '@/views/apotekConfig'
 
-const dpr = Math.min(window.devicePixelRatio, 2)
+const dpr = Math.min(window.devicePixelRatio, 1.5)
 
-const positionData = ref<{
-  position: Vector3,
-  rotation: RotationDegrees,
-  lookAt: Vector3,
-}>({
-  position: new Vector3(0, 0, 0),
-  rotation: { x: 0, y: 0, z: 0 },
-  lookAt: new Vector3(0, 0, 0),
-});
+// const positionData = ref<{
+//   position: Vector3,
+//   rotation: RotationDegrees,
+//   lookAt: Vector3,
+// }>({
+//   position: new Vector3(0, 0, 0),
+//   rotation: { x: 0, y: 0, z: 0 },
+//   lookAt: new Vector3(0, 0, 0),
+// });
 
 </script>
 
@@ -34,12 +34,12 @@ const positionData = ref<{
         <TresCanvas
           alpha
           :clear-alpha="0"
-          render-mode="on-demand"
           :dpr="dpr"
         >
           <!-- <ApotekScene @position="positionData = $event" /> -->
           <ApotekScene />
         </TresCanvas>
+
         <!-- <DisplayCoordinates v-if="DEBUG.showCoordinates" :position="positionData.position" /> -->
       </div>
     </div>

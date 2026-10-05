@@ -8,7 +8,7 @@ const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', redirect: '/apotek' },
-    { path: '/apotek', component: () => import('./views/ApotekView.vue') },
+    { path: '/apotek', component: () => import('./views/apotekview/ApotekView.vue') },
     { path: '/practice', component: () => import('./views/PracticeView.vue') },
     { path: '/three', component: () => import('./views/threeview/ThreeView.vue') },
     { path: '/ortho', component: () => import('./views/orthoview/OrthoView.vue') },

@@ -7,7 +7,7 @@ import { Vector3 } from 'three'
 
 import { usePlayerMovement } from '../composables/player/usePlayerMovement'
 import { useDragLook } from '../composables/player/useDragLook'
-import useTresLoopDebug from '@/composables/useTresLoopDebug'
+// import useTresLoopDebug from '@/composables/useTresLoopDebug'
 
 import {
   Collider,
@@ -19,23 +19,24 @@ import {
 // useTresLoopDebug()
 
 const props = defineProps<{
-  initialCameraPosition?: Vector3
-  initialCameraLookAt?: Vector3
+  initialPosition?: Vector3
+  initialLookAt?: Vector3
 }>()
 
 const customerRef = shallowRef<ExposedRigidBody | null>(null);
 const customerColliderRef = shallowRef<ExposedCollider | null>(null)
-
-const cameraInitialPosition = props.initialCameraPosition ?? new Vector3(0, 0.65, 0);
-const cameraInitialLookAt = props.initialCameraLookAt ?? new Vector3(0, 0.65, -1);
-
-const cameraPosition = shallowRef<Vector3>(cameraInitialPosition);
 const customerPOVCameraRef = shallowRef<THREE.Camera | null>(null)
+
+const position = props.initialPosition ?? new Vector3(0, 0.65, 0);
+const lookAt = props.initialLookAt ?? new Vector3(0, 0, 0);
+
+const localCamPos = new Vector3(0, 0.65, 0);
+
 
 usePlayerMovement({
   bodyRef: customerRef,
-  colliderRef: customerColliderRef,
   cameraRef: customerPOVCameraRef,
+  colliderRef: customerColliderRef,
   speed: 5,
 })
 
@@ -43,6 +44,7 @@ useDragLook({
   cameraRef: customerPOVCameraRef,
   minPolarAngle: Math.PI / 4,
   maxPolarAngle: 5 * Math.PI / 8,
+  lookAt,
 })
 
 </script>
@@ -52,7 +54,7 @@ useDragLook({
     ref="customerRef"
     type="kinematic"
     :collider="false"
-    :position="[0, 1, 4]"
+    :position="position"
   >
     <Collider
       shape="capsule"
@@ -63,8 +65,7 @@ useDragLook({
 
     <TresPerspectiveCamera
       ref="customerPOVCameraRef"
-      :position="cameraPosition"
-      :lookAt="cameraInitialLookAt"
+      :position="localCamPos"
       :fov="60"
     />
   </RigidBody>

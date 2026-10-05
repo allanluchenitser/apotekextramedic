@@ -5,6 +5,7 @@ import { useTresContext } from '@tresjs/core'
 
 type UseDragLookParams = {
   cameraRef: ShallowRef<THREE.Camera | null>,
+  lookAt?: THREE.Vector3,
   minPolarAngle?: number,
   maxPolarAngle?: number,
   sensitivity?: number,
@@ -12,11 +13,15 @@ type UseDragLookParams = {
 
 export function useDragLook({
   cameraRef,
+  lookAt,
   minPolarAngle = 0,
   maxPolarAngle = Math.PI,
   sensitivity = 0.003,
 }: UseDragLookParams) {
   const { renderer } = useTresContext()
+
+  const minPitch = Math.PI / 2 - maxPolarAngle
+  const maxPitch = Math.PI / 2 - minPolarAngle
 
   let dragging = false
   let element: HTMLElement | null = null
@@ -67,6 +72,18 @@ export function useDragLook({
     },
     { immediate: true },
   )
+
+  watch(cameraRef, (cam) => {
+    if (!cam || !lookAt) return
+
+    // Parent (RigidBody) world matrix isn't synced yet at mount.
+    cam.updateWorldMatrix(true, false)
+
+    cam.rotation.order = 'YXZ'
+    cam.lookAt(lookAt)
+
+    cam.rotation.x = Math.max(minPitch, Math.min(maxPitch, cam.rotation.x))
+  }, { immediate: true })
 
   onBeforeUnmount(detach)
 }
