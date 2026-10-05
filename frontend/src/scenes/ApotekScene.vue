@@ -1,31 +1,30 @@
 <script setup lang="ts">
-
 import { nextTick, onMounted, ref, watch, computed, watchEffect } from 'vue'
-import * as THREE from 'three'
-
-import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
-
-import { OrbitControls, useGLTF } from '@tresjs/cientos'
-import { useLoop, useTresContext } from '@tresjs/core'
 
 import {
   Vector3,
   Mesh,
+  Camera,
   type PointLight,
   type DirectionalLight,
   type PointLightHelper,
   type DirectionalLightHelper
 } from 'three'
 
-import { toFixedNumber, tresObjectInfo } from '@/js/util'
+import { useLoop, useTresContext } from '@tresjs/core'
+import { useGLTF } from '@tresjs/cientos'
+
+import {
+  Physics,
+  RigidBody,
+} from '@tresjs/rapier'
+
+import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
+
+// import { toFixedNumber, tresObjectInfo } from '@/js/util'
 import type { RotationDegrees } from '@/js/localTypes'
 
-import { usePointLightGui } from '@/scenes/usePointLightGui'
-import { useDirectionalLightGui } from '@/scenes/useDirectionalLightGui'
-
-import { giveAllMeshesOwnMaterial } from '@/scenes/apotekHelpers'
-import { useMeshDebugger } from '@/scenes/useMeshDebugger'
-import GUI from 'lil-gui'
+import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
 // ------ SETUP ------
 
@@ -33,8 +32,8 @@ const emit = defineEmits<{
   position: [{
     position: Vector3,
     rotation: RotationDegrees,
-    lookAt: Vector3,
-  }],
+    lookAt: Vector3 | null
+  } | undefined]
 }>();
 
 const {
@@ -42,9 +41,7 @@ const {
   isLoading
 } = useGLTF(apotekGlbUrl);
 
-const { camera, renderer } = useTresContext();
-
-
+const { renderer } = useTresContext();
 const { onBeforeRender } = useLoop();
 
 const initialCameraPosition = new Vector3(10.51,
@@ -52,96 +49,19 @@ const initialCameraPosition = new Vector3(10.51,
 15.16
 )
 
-const initialLookAtPosition = new Vector3(1.11,
-2.94,
-3.43)
-
 const directionalLightPosition = new Vector3(0, 8, 20);
 const directionalLightLookAt = new Vector3(0, 8, 0);
 
 // ------ REFS ------
 
-const controls = ref<any>(null)
-
-const pointLightRef = ref<PointLight | null>(null)
-const pointLightHelperRef = ref<PointLightHelper | null>(null)
-
-const directionLightRef = ref<DirectionalLight | null>(null)
-const directionLightHelperRef = ref<DirectionalLightHelper | null>(null)
-
-// ------ WATCHERS ------
-
-// useMeshDebugger(
-//   () => apotekState.value?.scene,
-//   {
-//     enabled: import.meta.env.DEV,
-//     boxColor: 0xffff00,
-//     markerColor: 0xff3333,
-//   },
-// )
-
-// watch(isLoading, (loading) => {
-//   if (loading || !apotekState.value?.scene) return;
-
-//   const scene = apotekState.value.scene;
-
-//   giveAllMeshesOwnMaterial(scene);
-
-//   let lastParentName = '';
-
-//   scene.traverse((obj) => {
-//     if (obj instanceof THREE.Mesh) {
-//       if (obj.parent?.name !== lastParentName) {
-//         // console.log('---', obj.parent?.name, '---')
-//         lastParentName = obj.parent?.name || '';
-//       }
-//       else {
-//         // console.log(obj.name);
-//       }
-//       const materials = Array.isArray(obj.material)
-//         ? obj.material
-//         : [obj.material]
-
-//       materials.forEach((material) => {
-//         if ('normalMap' in material) {
-//           material.normalMap = null
-//           material.needsUpdate = true
-//         }
-//       })
-//     }
-//   })
-// })
+const orbitControlsRef = ref<any>(null)
 
 // ------ LIFECYCLE ------
 
 // RAF loop
 onBeforeRender(() => {
-  const cam = camera.activeCamera.value;
-
-  const position = cam.position;
-  const rotation = cam.rotation;
-
-  if (!position) return;
-
-  const px = toFixedNumber(position.x, 2)
-  const py = toFixedNumber(position.y, 2)
-  const pz = toFixedNumber(position.z, 2)
-
-  const ex = toFixedNumber(180 * rotation.x / Math.PI, 2)
-  const ey = toFixedNumber(180 * rotation.y / Math.PI, 2)
-  const ez = toFixedNumber(180 * rotation.z / Math.PI, 2)
-
-  const pos = new Vector3(px, py, pz);
-  const rot: RotationDegrees = { x: ex, y: ey, z: ez };
-  const look = controls.value?.instance?.target;
-
-  // console.log('look', look)
-
-  emit('position', {
-    position: pos,
-    rotation: rot,
-    lookAt: look,
-  });
+  // const camData = cameraPosRotLookat(camera.activeCamera.value)
+  // emit('position', camData);
 
   console.log('render loop');
 });
@@ -153,17 +73,41 @@ renderer.onRender(() => {
 
 onMounted(async () => {
   await nextTick();
-  controls.value?.instance.update();
+  orbitControlsRef.value?.instance.update();
 
   const worldPosition = new Vector3()
   apotekState.value?.scene.getWorldPosition(worldPosition)
   // console.log('world position:', worldPosition.toArray().join(', '))
 })
 
+// function cameraPosRotLookat(camera: Camera, orbitControlsRef: any): {
+//   position: Vector3;
+//   rotation: RotationDegrees;
+//   lookAt: Vector3;
+// } | undefined {
+//   const position = camera.position;
+//   const rotation = camera.rotation;
 
-// const gui = new GUI()
-// usePointLightGui(gui, pointLightRef, pointLightHelperRef)
-// useDirectionalLightGui(gui, directionLightRef, directionLightHelperRef)
+//   if (!position) return;
+
+//   const px = toFixedNumber(position.x, 2)
+//   const py = toFixedNumber(position.y, 2)
+//   const pz = toFixedNumber(position.z, 2)
+
+//   const ex = toFixedNumber(180 * rotation.x / Math.PI, 2)
+//   const ey = toFixedNumber(180 * rotation.y / Math.PI, 2)
+//   const ez = toFixedNumber(180 * rotation.z / Math.PI, 2)
+
+//   const pos = new Vector3(px, py, pz);
+//   const rot: RotationDegrees = { x: ex, y: ey, z: ez };
+//   const look = orbitControlsRef.value?.instance?.target;
+
+//   return {
+//     position: pos,
+//     rotation: rot,
+//     lookAt: look,
+//   };
+// }
 
 // const interactiveMeshes = computed(() => {
 //   const meshes = Object.values(apotekNodes.value).filter(
@@ -177,10 +121,14 @@ onMounted(async () => {
 </script>
 
 <template>
+  <Suspense>
+    <Physics debug>
   <!-- ------ CAMERA ------ -->
-  <TresPerspectiveCamera
+  <!-- <TresPerspectiveCamera
     :position="initialCameraPosition"
-  />
+  /> -->a
+
+  <WalkThroughController :initialCameraPosition="initialCameraPosition" />
 
 
   <!-- ------ LOAD GLB ------ -->
@@ -212,9 +160,11 @@ onMounted(async () => {
 <!--   <TresAxesHelper />
   <TresGridHelper :args="[10, 10]" /> -->
 
-  <OrbitControls
-    ref="controls"
+  <!-- <OrbitControls
+    ref="orbitControlsRef"
     :enableDamping="false"
     :target="initialLookAtPosition"
-  />
+  /> -->
+    </Physics>
+  </Suspense>
 </template>

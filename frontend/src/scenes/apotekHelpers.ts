@@ -1,4 +1,7 @@
 import * as THREE from 'three'
+import { toFixedNumber } from '@/js/util'
+import type { RotationDegrees } from '@/js/localTypes'
+
 
 export function giveAllMeshesOwnMaterial(scene: THREE.Object3D) {
   scene.traverse((obj) => {

@@ -5,16 +5,16 @@ import { ref } from 'vue'
 import { Vector3 } from 'three'
 import type { RotationDegrees } from '@/js/localTypes'
 
-import GoogleSideBar from '@/components/GoogleSideBar.vue'
+import GoogleSideBar from '@/sharedComponents/GoogleSideBar.vue'
 import ApotekScene from '@/scenes/ApotekScene.vue'
-import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
+import DisplayCoordinates from '@/sharedComponents/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
 import { DEBUG } from '@/views/apotekConfig'
 
 const dpr = Math.min(window.devicePixelRatio, 2)
 
-const position = ref<{
+const positionData = ref<{
   position: Vector3,
   rotation: RotationDegrees,
   lookAt: Vector3,
@@ -37,12 +37,10 @@ const position = ref<{
           render-mode="on-demand"
           :dpr="dpr"
         >
-        <!-- <TresFog :color="0xFFFFFF" :near="50" :far="100"> -->
-          <ApotekScene @position="position = $event" />
-          <!-- <ApotekScene /> -->
-        <!-- </TresFog> -->
+          <!-- <ApotekScene @position="positionData = $event" /> -->
+          <ApotekScene />
         </TresCanvas>
-        <DisplayCoordinates v-if="DEBUG.showCoordinates" :position="position" />
+        <!-- <DisplayCoordinates v-if="DEBUG.showCoordinates" :position="positionData.position" /> -->
       </div>
     </div>
   </div>

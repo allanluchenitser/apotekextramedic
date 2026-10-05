@@ -12,7 +12,7 @@ import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
 import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-import DisplayCoordinates from '@/components/DisplayCoordinates.vue';
+import DisplayCoordinates from '@/sharedComponents/DisplayCoordinates.vue';
 
 import type { RotationDegrees } from '@/js/localTypes';
 

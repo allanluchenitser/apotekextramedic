@@ -8,7 +8,7 @@ import {
   type ExposedRigidBody,
 } from '@tresjs/rapier'
 
-import { useWASD } from './useWASD'
+import { useWASDKeys } from './useWASDKeys'
 
 type UsePlayerMovementParams = {
   bodyRef: ShallowRef<ExposedRigidBody | null>,
@@ -23,7 +23,7 @@ export function usePlayerMovement({
   cameraRef,
   speed = 3,
 }: UsePlayerMovementParams) {
-  const { keys } = useWASD()
+  const { keys } = useWASDKeys()
 
   const { camera } = useTresContext()
   const { world, onBeforeStep } = useRapier()
@@ -86,11 +86,11 @@ export function usePlayerMovement({
 
     const corrected = controller.computedMovement()
 
-    console.log({
-      desired: movement.toArray(),
-      corrected: [corrected.x, corrected.y, corrected.z],
-      collisions: controller.numComputedCollisions(),
-    })
+    // console.log({
+    //   desired: movement.toArray(),
+    //   corrected: [corrected.x, corrected.y, corrected.z],
+    //   collisions: controller.numComputedCollisions(),
+    // })
 
     const current = body.translation()
 

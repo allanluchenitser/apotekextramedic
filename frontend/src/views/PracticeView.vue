@@ -2,8 +2,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import ControlSideBar from '@/components/ControlSideBar.vue'
-import DesktopSideBar from '@/components/GoogleSideBar.vue'
+import ControlSideBar from '@/sharedComponents/ControlSideBar.vue'
+import DesktopSideBar from '@/sharedComponents/GoogleSideBar.vue'
 import PracticeScene from '@/scenes/PracticeScene.vue'
 import { TresCanvas } from '@tresjs/core'
 

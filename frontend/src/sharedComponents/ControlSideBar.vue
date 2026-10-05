@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SideBar from '@/components/SideBar.vue'
+import SideBar from '@/sharedComponents/SideBar.vue'
 
 const props = defineProps<{
   width: string

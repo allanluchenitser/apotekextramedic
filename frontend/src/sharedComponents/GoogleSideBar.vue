@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import SideBar from '@/components/SideBar.vue'
+import SideBar from '@/sharedComponents/SideBar.vue'
 import headerImg from '@/assets/img/apotek-sidebar-header.webp'
 import { Clock, Phone } from '@lucide/vue';
 

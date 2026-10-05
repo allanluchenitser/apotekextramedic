@@ -1,43 +1,17 @@
 <script setup lang="ts">
-import { ref, shallowRef, watch, nextTick } from 'vue'
+import { ref } from 'vue'
 import { Vector3 } from 'three'
 import { TresCanvas } from '@tresjs/core'
 
 import {
   Physics,
   RigidBody,
-  type ExposedRigidBody
 } from '@tresjs/rapier'
 
-import PlayerController from './PlayerController.vue'
+import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
 const positionFloor = ref<Vector3>(new Vector3(0, -0.25, 0))
 const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
-
-const wallRef = shallowRef<ExposedRigidBody | null>(null);
-
-watch(
-  () => wallRef.value?.instance,
-  async (body) => {
-    if (!body) return;
-
-    await nextTick()
-
-    console.table(
-      Array.from({ length: body.numColliders() }, (_, index) => {
-        const collider = body.collider(index)
-        return {
-          index,
-          isSensor: collider.isSensor(),
-          shapeType: collider.shapeType(),
-          enabled: collider.isEnabled(),
-        }
-      }),
-    )
-  },
-  { immediate: true, flush: 'post' },
-)
-
 </script>
 
 <template>
@@ -66,7 +40,7 @@ watch(
 
       <Suspense>
         <Physics debug>
-          <PlayerController />
+          <WalkThroughController :initialCameraPosition="new Vector3(0, 0.65, 0)" />
 
           <!-- floor -->
           <RigidBody type="fixed">
@@ -78,7 +52,6 @@ watch(
 
           <!-- wall -->
           <RigidBody
-            ref="wallRef"
             type="fixed"
           >
             <TresMesh :position="positionWall">

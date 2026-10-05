@@ -1,6 +1,6 @@
 import { onMounted, onUnmounted, reactive } from 'vue'
 
-export function useWASD() {
+export function useWASDKeys() {
   const keys = reactive({
     forward: false,
     backward: false,
