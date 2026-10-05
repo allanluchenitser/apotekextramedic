@@ -7,6 +7,8 @@ export function useWASDKeys() {
     left: false,
     right: false,
     shift: false,
+    up: false,
+    down: false,
   })
 
   function keyDown(e: KeyboardEvent) {
@@ -23,6 +25,12 @@ export function useWASDKeys() {
         break
       case 'KeyD':
         keys.right = true
+        break
+      case 'KeyE':
+        keys.up = true
+        break
+      case 'KeyQ':
+        keys.down = true
         break
       case 'ShiftLeft':
       case 'ShiftRight':
@@ -45,6 +53,12 @@ export function useWASDKeys() {
         break
       case 'KeyD':
         keys.right = false
+        break
+      case 'KeyE':
+        keys.up = false
+        break
+      case 'KeyQ':
+        keys.down = false
         break
       case 'ShiftLeft':
       case 'ShiftRight':

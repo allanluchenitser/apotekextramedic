@@ -15,6 +15,7 @@ type UsePlayerMovementParams = {
   colliderRef: ShallowRef<any>,
   cameraRef: ShallowRef<THREE.Camera | null>,
   speed?: number,
+  allowVerticalMovement?: boolean,
 }
 
 export function usePlayerMovement({
@@ -22,6 +23,7 @@ export function usePlayerMovement({
   colliderRef,
   cameraRef,
   speed = 3,
+  allowVerticalMovement = false,
 }: UsePlayerMovementParams) {
   const { keys } = useWASDKeys()
 
@@ -30,6 +32,7 @@ export function usePlayerMovement({
 
   // Small safety gap around the character.
   const controller = world.value.createCharacterController(0.01)
+  controller.enableAutostep(0.5, 0.05, true)
 
   const forward = new Vector3()
   const right = new Vector3()
@@ -73,6 +76,8 @@ export function usePlayerMovement({
     if (keys.backward) movement.sub(forward)
     if (keys.right) movement.add(right)
     if (keys.left) movement.sub(right)
+    if (allowVerticalMovement && keys.up) movement.y += 1
+    if (allowVerticalMovement && keys.down) movement.y -= 1
 
     if (movement.lengthSq() === 0) {
       return

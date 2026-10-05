@@ -21,6 +21,7 @@ import {
 const props = defineProps<{
   initialPosition?: Vector3
   initialLookAt?: Vector3
+  allowVerticalMovement?: boolean
 }>()
 
 const customerRef = shallowRef<ExposedRigidBody | null>(null);
@@ -37,7 +38,10 @@ usePlayerMovement({
   bodyRef: customerRef,
   cameraRef: customerPOVCameraRef,
   colliderRef: customerColliderRef,
+
   speed: 5,
+
+  allowVerticalMovement: props.allowVerticalMovement ?? false,
 })
 
 useDragLook({
