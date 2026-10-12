@@ -32,7 +32,9 @@ export function usePlayerMovement({
 
   // Small safety gap around the character.
   const controller = world.value.createCharacterController(0.01)
-  controller.enableAutostep(0.5, 0.05, true)
+
+  controller.enableAutostep(2, 0.05, true)
+  controller.enableSnapToGround(0.5);
 
   const forward = new Vector3()
   const right = new Vector3()
@@ -46,16 +48,16 @@ export function usePlayerMovement({
       ? speed * 2.5
       : speed
 
-    const body = bodyRef.value?.instance
-    const collider = colliderRef.value?.instance
+    const bodyInstance = bodyRef.value?.instance
+    const colliderInstance = colliderRef.value?.instance
     const cam = cameraRef.value || camera.activeCamera.value
 
-    if (!body || !collider || !cam) {
+    if (!bodyInstance || !colliderInstance || !cam) {
       console.warn('Missing body, collider, or camera')
       console.log({
-        player: !!bodyRef.value,
+        player: !!bodyInstance,
         colliderRef: !!colliderRef.value,
-        colliderInstance: !!colliderRef.value?.instance,
+        colliderInstance: !!colliderInstance,
       })
       return
     }
@@ -87,7 +89,7 @@ export function usePlayerMovement({
     movement.normalize().multiplyScalar(_speed * dt)
 
     // Ask Rapier how much of that movement is legal.
-    controller.computeColliderMovement(collider, movement);
+    controller.computeColliderMovement(colliderInstance, movement);
 
     const corrected = controller.computedMovement()
 
@@ -97,9 +99,9 @@ export function usePlayerMovement({
     //   collisions: controller.numComputedCollisions(),
     // })
 
-    const current = body.translation()
+    const current = bodyInstance.translation()
 
-    body.setNextKinematicTranslation({
+    bodyInstance.setNextKinematicTranslation({
       x: current.x + corrected.x,
       y: current.y + corrected.y,
       z: current.z + corrected.z,

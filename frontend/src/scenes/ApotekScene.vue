@@ -1,6 +1,20 @@
 <script setup lang="ts">
 import * as THREE from 'three'
-import { nextTick, onMounted, ref, watch, computed, watchEffect } from 'vue'
+
+import {
+  INITIAL_CUSTOMER_POSITION,
+  INITIAL_CUSTOMER_LOOK_AT
+} from '@/views/apotekview/apotekConfig'
+
+import {
+  nextTick,
+  onMounted,
+  ref,
+  watch,
+  computed,
+  watchEffect,
+  shallowRef
+} from 'vue'
 
 import {
   Vector3,
@@ -30,14 +44,14 @@ import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
 // ------ SETUP ------
 
-const debugColliders = true
+const debugColliders = false;
+const colliderMeshes = shallowRef<THREE.Mesh[]>([])
 
 const {
   state: apotekState,
   isLoading
 } = useGLTF(apotekGlbUrl);
 
-const initialCustomerPosition = new Vector3(10.51, 0, 15.16)
 const directionalLightPosition = new Vector3(0, 8, 20);
 const directionalLightLookAt = new Vector3(0, 8, 0);
 
@@ -54,23 +68,35 @@ watch(
     scene.traverse((obj) => {
       // console.log('traversing object:', obj.name)
 
+      // barf all names
+      // console.log('name barf:', obj.name)
+
       // Inspect objects here
-      if (obj instanceof THREE.Mesh && obj.name === 'floor_outside_pre-lot') {
-        console.log('found floor_outside_pre-lot')
-        const box = new THREE.Box3().setFromObject(obj)
-        const size = new THREE.Vector3()
-        box.getSize(size)
-        console.log(
-          'floor outside pre-lot size:',
-          size.toArray()
-        )
+
+      if (obj.name.includes('wall')) {
+        console.log('found wall:', obj.name)
+        // const box = new THREE.Box3().setFromObject(obj)
+        // const size = new THREE.Vector3()
+        // box.getSize(size)
+        // console.log(
+        //   'wall size:',
+        //   size.toArray()
+        // )
       }
 
-      // Visualize colliders, debug
+      // generate collider meshes array
+
       if (obj.name.startsWith('COL_')) {
+        console.log('found collider:', obj.name)
+
         obj.visible = debugColliders
 
+        if (obj instanceof THREE.Mesh) {
+          colliderMeshes.value.push(obj)
+        }
+
         if (debugColliders && obj instanceof THREE.Mesh) {
+
           obj.material = new THREE.MeshBasicMaterial({
             color: 0xff00ff,
             wireframe: true,
@@ -91,10 +117,11 @@ watch(
 
 <template>
   <Suspense>
-    <Physics debug>
+    <Physics>
       <!-- ------ CAMERA ------ -->
       <WalkThroughController
-        :initialPosition="initialCustomerPosition"
+        :initialPosition="INITIAL_CUSTOMER_POSITION"
+        :initialLookAt="INITIAL_CUSTOMER_LOOK_AT"
         :allowVerticalMovement="true"
       />
 
@@ -110,6 +137,15 @@ watch(
         v-if="!isLoading"
         :object="apotekState?.scene"
       />
+
+      <RigidBody
+        v-for="colMesh in colliderMeshes"
+        :key="colMesh.uuid"
+        type="fixed"
+        collider="trimesh"
+      >
+        <primitive :object="colMesh" />
+      </RigidBody>
 
       <!-- ------ LIGHTS ------ -->
 
