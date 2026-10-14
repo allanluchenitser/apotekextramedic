@@ -3,6 +3,8 @@ import { ref } from 'vue'
 import { Vector3 } from 'three'
 import { TresCanvas } from '@tresjs/core'
 
+import { CUBOID_HALF_HEIGHT, CUBOID_RADIUS } from '@/views/apotekview/apotekConfig'
+
 import {
   Physics,
   RigidBody,
@@ -40,7 +42,7 @@ const positionWall = ref<Vector3>(new Vector3(0, 1.5, -4))
 
       <Suspense>
         <Physics debug>
-          <WalkThroughController :initialCameraPosition="new Vector3(0, 0.65, 0)" />
+          <WalkThroughController :initialCameraPosition="new Vector3(0, CUBOID_HALF_HEIGHT + CUBOID_RADIUS, 0)" />
 
           <!-- floor -->
           <RigidBody type="fixed">

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import type * as THREE from 'three'
-import { HUMAN_HALF_HEIGHT } from '@/views/apotekview/apotekConfig'
+import {
+  CUBOID_HALF_HEIGHT,
+  CUBOID_RADIUS
+} from '@/views/apotekview/apotekConfig'
 
 import { shallowRef } from 'vue'
 
@@ -29,10 +32,10 @@ const customerRef = shallowRef<ExposedRigidBody | null>(null);
 const customerColliderRef = shallowRef<ExposedCollider | null>(null)
 const customerPOVCameraRef = shallowRef<THREE.Camera | null>(null)
 
-const position = props.initialPosition ?? new Vector3(0, HUMAN_HALF_HEIGHT, 0);
+const position = props.initialPosition ?? new Vector3(0, CUBOID_HALF_HEIGHT, 0);
 const lookAt = props.initialLookAt ?? new Vector3(0, 0, 0);
 
-const localCamPos = new Vector3(0, HUMAN_HALF_HEIGHT, 0);
+const localCamPos = new Vector3(0, CUBOID_HALF_HEIGHT, 0);
 
 usePlayerMovement({
   bodyRef: customerRef,
@@ -64,7 +67,7 @@ useDragLook({
       shape="capsule"
       ref="customerColliderRef"
       :position="[0, 0, 0]"
-      :args="[0.65, 0.35]"
+      :args="[CUBOID_HALF_HEIGHT, CUBOID_RADIUS]"
     />
 
     <TresPerspectiveCamera

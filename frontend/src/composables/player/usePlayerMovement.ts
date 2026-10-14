@@ -33,7 +33,7 @@ export function usePlayerMovement({
   // Small safety gap around the character.
   const controller = world.value.createCharacterController(0.01)
 
-  controller.enableAutostep(2, 0.05, true)
+  controller.enableAutostep(2, 0.05, false)
   controller.enableSnapToGround(0.5);
 
   const forward = new Vector3()

@@ -35,7 +35,8 @@ import {
 } from '@tresjs/rapier'
 
 // import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
-import apotekGlbUrl from '@/assets/glb/apotek_colliders.glb?url'
+// import apotekGlbUrl from '@/assets/glb/apotek_colliders.glb?url'
+import apotekGlbUrl from '@/assets/glb/apotek_elaborate.glb?url'
 
 // import { toFixedNumber, tresObjectInfo } from '@/js/util'
 import type { RotationDegrees } from '@/js/localTypes'
@@ -44,7 +45,7 @@ import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
 // ------ SETUP ------
 
-const debugColliders = false;
+const debugColliders = true;
 const colliderMeshes = shallowRef<THREE.Mesh[]>([])
 
 const {
@@ -86,29 +87,34 @@ watch(
 
       // generate collider meshes array
 
-      if (obj.name.startsWith('COL_')) {
+      if (obj.name.startsWith('COL_') && obj instanceof THREE.Mesh) {
         console.log('found collider:', obj.name)
 
+        colliderMeshes.value.push(obj)
         obj.visible = debugColliders
 
-        if (obj instanceof THREE.Mesh) {
-          colliderMeshes.value.push(obj)
-        }
+        if (debugColliders) {
+          const edgesGeometry = new THREE.EdgesGeometry(obj.geometry, 30);
 
-        if (debugColliders && obj instanceof THREE.Mesh) {
+          const outline = new THREE.LineSegments(
+            edgesGeometry,
+            new THREE.LineBasicMaterial({
+              color: 0xff00ff,
+              depthTest: false,
+              depthWrite: false,
+              transparent: true,
+              opacity: 0.7,
+            })
+          )
+
+          outline.renderOrder = 999
+          obj.add(outline)
 
           obj.material = new THREE.MeshBasicMaterial({
-            color: 0xff00ff,
-            wireframe: true,
-            depthTest: false,
-            transparent: true,
-            opacity: 0.7,
+            visible: false,
           })
-
-          obj.renderOrder = 999
         }
       }
-
     })
   },
   { immediate: true }
