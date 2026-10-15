@@ -26,6 +26,7 @@ const props = defineProps<{
   initialPosition?: Vector3
   initialLookAt?: Vector3
   allowVerticalMovement?: boolean
+  thirdPerson?: boolean
 }>()
 
 const customerRef = shallowRef<ExposedRigidBody | null>(null);
@@ -35,7 +36,11 @@ const customerPOVCameraRef = shallowRef<THREE.Camera | null>(null)
 const position = props.initialPosition ?? new Vector3(0, CUBOID_HALF_HEIGHT, 0);
 const lookAt = props.initialLookAt ?? new Vector3(0, 0, 0);
 
-const localCamPos = new Vector3(0, CUBOID_HALF_HEIGHT, 0);
+const localCamPos = new Vector3(
+  0,
+  CUBOID_HALF_HEIGHT,
+  props.thirdPerson ? 3 : 0
+);
 
 usePlayerMovement({
   bodyRef: customerRef,

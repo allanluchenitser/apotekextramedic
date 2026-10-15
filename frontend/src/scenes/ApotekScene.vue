@@ -13,7 +13,7 @@ import {
   watch,
   computed,
   watchEffect,
-  shallowRef
+  shallowRef,
 } from 'vue'
 
 import {
@@ -45,8 +45,11 @@ import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
 // ------ SETUP ------
 
-const debugColliders = true;
+const debugColliders = false;
 const colliderMeshes = shallowRef<THREE.Mesh[]>([])
+
+const { scene } = useTresContext()
+const { onBeforeRender } = useLoop()
 
 const {
   state: apotekState,
@@ -61,6 +64,27 @@ const directionalLightLookAt = new Vector3(0, 8, 0);
 
 // ------ WATCHES, LIFECYCLE ------
 
+let debugLines: THREE.Object3D | null = null
+
+// Rapier's debug lines are culled by a stale bounding sphere.
+onBeforeRender(() => {
+  if (debugLines || isLoading.value) return
+
+  scene.value.traverse((o) => {
+    if (debugLines || !(o as THREE.LineSegments).isLineSegments) return
+
+    // Skip lines that belong to the GLB itself.
+    let p: THREE.Object3D | null = o
+    while (p) {
+      if (p === apotekState.value?.scene) return
+      p = p.parent
+    }
+
+    o.frustumCulled = false
+    debugLines = o
+  })
+})
+
 watch(
   () => apotekState.value?.scene,
   (scene) => {
@@ -74,8 +98,8 @@ watch(
 
       // Inspect objects here
 
-      if (obj.name.includes('wall')) {
-        console.log('found wall:', obj.name)
+      // if (obj.name.includes('wall')) {
+        // console.log('found wall:', obj.name)
         // const box = new THREE.Box3().setFromObject(obj)
         // const size = new THREE.Vector3()
         // box.getSize(size)
@@ -83,7 +107,7 @@ watch(
         //   'wall size:',
         //   size.toArray()
         // )
-      }
+      // }
 
       // generate collider meshes array
 
@@ -123,12 +147,13 @@ watch(
 
 <template>
   <Suspense>
-    <Physics>
+    <Physics debug>
       <!-- ------ CAMERA ------ -->
       <WalkThroughController
         :initialPosition="INITIAL_CUSTOMER_POSITION"
         :initialLookAt="INITIAL_CUSTOMER_LOOK_AT"
         :allowVerticalMovement="true"
+        third-person
       />
 
       <!-- ------ LOAD GLB ------ -->

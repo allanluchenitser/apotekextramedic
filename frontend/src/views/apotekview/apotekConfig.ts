@@ -7,7 +7,7 @@ export const DEBUG = {
 }
 
 export const CUBOID_HALF_HEIGHT = 0.65;
-export const CUBOID_RADIUS = 0.2;
+export const CUBOID_RADIUS = 0.01;
 
 export const INITIAL_CUSTOMER_POSITION = new THREE.Vector3(
   10.51,
