@@ -152,8 +152,7 @@ watch(
       <WalkThroughController
         :initialPosition="INITIAL_CUSTOMER_POSITION"
         :initialLookAt="INITIAL_CUSTOMER_LOOK_AT"
-        :allowVerticalMovement="true"
-        third-person
+        :allowVerticalMovement="false"
       />
 
       <!-- ------ LOAD GLB ------ -->
