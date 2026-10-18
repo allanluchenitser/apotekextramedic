@@ -214,12 +214,10 @@ watch(
       />
 
 
-      <!-- ------ HELPERS ------ -->
+      <!-- ------ ANCILLARY HELPERS ------ -->
 
-      <
-
-      <!-- <TresAxesHelper />
-      <TresGridHelper :args="[10, 10]" /> -->
+      <!-- <TresAxesHelper /> -->
+      <!-- <TresGridHelper :args="[10, 10]" /> -->
     </Physics>
   </Suspense>
 </template>
