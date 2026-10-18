@@ -16,7 +16,7 @@
     "@tailwindcss/vite": "^4.3.3",
     "@tresjs/cientos": "latest",
     "@tresjs/core": "latest",
-    "@tresjs/leches": "latest",
+    "@tresjs/leches": "github:tresjs/leches",
     "@tresjs/post-processing": "latest",
     "@tresjs/rapier": "^1.1.2",
     "lil-gui": "^0.21.0",

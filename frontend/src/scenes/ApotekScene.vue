@@ -56,8 +56,13 @@ const {
   isLoading
 } = useGLTF(apotekGlbUrl);
 
-const directionalLightPosition = new Vector3(0, 8, 20);
-const directionalLightLookAt = new Vector3(0, 8, 0);
+const outdoorDirectionalLightPosition = new Vector3(0, 8, 20);
+const outdoorDirectionalLightLookAt = new Vector3(0, 8, 0);
+const outdoorDirectionalLightRef = ref<THREE.DirectionalLight | null>(null);
+
+const ceilingLightPosition = new Vector3(0, 2, 0);
+const ceilingLightLookAt = new Vector3(0, 0, 0);
+const ceilingLightRef = ref<THREE.DirectionalLight | null>(null);
 
 // ------ REFS ------
 
@@ -147,12 +152,12 @@ watch(
 
 <template>
   <Suspense>
-    <Physics debug>
+    <Physics>
       <!-- ------ CAMERA ------ -->
       <WalkThroughController
         :initialPosition="INITIAL_CUSTOMER_POSITION"
         :initialLookAt="INITIAL_CUSTOMER_LOOK_AT"
-        :allowVerticalMovement="false"
+        :allowVerticalMovement="true"
       />
 
       <!-- ------ LOAD GLB ------ -->
@@ -185,12 +190,33 @@ watch(
       />
 
       <TresDirectionalLight
-        :position="directionalLightPosition"
-        :lookAt="directionalLightLookAt"
+        ref="outdoorDirectionalLightRef"
+        :position="outdoorDirectionalLightPosition"
+        :lookAt="outdoorDirectionalLightLookAt"
         :intensity="3"
       />
 
+      <TresDirectionalLightHelper
+        v-if="outdoorDirectionalLightRef"
+        :args="[outdoorDirectionalLightRef]"
+      />
+
+      <TresDirectionalLight
+        ref="ceilingLightRef"
+        :position="ceilingLightPosition"
+        :lookAt="ceilingLightLookAt"
+        :intensity="3"
+      />
+
+      <TresDirectionalLightHelper
+        v-if="ceilingLightRef"
+        :args="[ceilingLightRef]"
+      />
+
+
       <!-- ------ HELPERS ------ -->
+
+      <
 
       <!-- <TresAxesHelper />
       <TresGridHelper :args="[10, 10]" /> -->
