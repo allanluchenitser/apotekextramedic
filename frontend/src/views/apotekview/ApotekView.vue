@@ -1,28 +1,16 @@
 <!-- @strictTemplates false -->
 
 <script setup lang="ts">
-// import { ref } from 'vue'
-// import { Vector3 } from 'three'
-// import type { RotationDegrees } from '@/js/localTypes'
 
 import GoogleSideBar from '@/sharedComponents/GoogleSideBar.vue'
 import ApotekScene from '@/scenes/ApotekScene.vue'
 // import DisplayCoordinates from '@/sharedComponents/DisplayCoordinates.vue';
 
 import { TresCanvas } from '@tresjs/core'
+import { TresLeches } from '@tresjs/leches'
 // import { DEBUG } from '@/views/apotekConfig'
 
 const dpr = Math.min(window.devicePixelRatio, 1.5)
-
-// const positionData = ref<{
-//   position: Vector3,
-//   rotation: RotationDegrees,
-//   lookAt: Vector3,
-// }>({
-//   position: new Vector3(0, 0, 0),
-//   rotation: { x: 0, y: 0, z: 0 },
-//   lookAt: new Vector3(0, 0, 0),
-// });
 
 </script>
 
@@ -31,6 +19,7 @@ const dpr = Math.min(window.devicePixelRatio, 1.5)
     <GoogleSideBar width="var(--left-sidebar-width)" side="left" />
     <div class="main-content">
       <div class="main-content-wrapper">
+        <TresLeches />
         <TresCanvas
           alpha
           :clear-alpha="0"

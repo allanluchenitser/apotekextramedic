@@ -7,24 +7,12 @@ import {
 } from '@/views/apotekview/apotekConfig'
 
 import {
-  nextTick,
-  onMounted,
   ref,
   watch,
-  computed,
-  watchEffect,
   shallowRef,
 } from 'vue'
 
-import {
-  Vector3,
-  Mesh,
-  Camera,
-  type PointLight,
-  type DirectionalLight,
-  type PointLightHelper,
-  type DirectionalLightHelper
-} from 'three'
+import { Vector3 } from 'three'
 
 import { useLoop, useTresContext } from '@tresjs/core'
 import { useGLTF } from '@tresjs/cientos'
@@ -34,12 +22,9 @@ import {
   RigidBody,
 } from '@tresjs/rapier'
 
-// import apotekGlbUrl from '@/assets/glb/apotek_tres.glb?url'
-// import apotekGlbUrl from '@/assets/glb/apotek_colliders.glb?url'
-import apotekGlbUrl from '@/assets/glb/apotek_elaborate.glb?url'
+import { useControls } from '@tresjs/leches';
 
-// import { toFixedNumber, tresObjectInfo } from '@/js/util'
-import type { RotationDegrees } from '@/js/localTypes'
+import apotekGlbUrl from '@/assets/glb/apotek_elaborate.glb?url'
 
 import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
 
@@ -58,20 +43,25 @@ const {
 
 const outdoorDirectionalLightPosition = new Vector3(0, 8, 20);
 const outdoorDirectionalLightLookAt = new Vector3(0, 8, 0);
-const outdoorDirectionalLightRef = ref<THREE.DirectionalLight | null>(null);
 
 const ceilingLightPosition = new Vector3(0, 2, 0);
-const ceilingLightLookAt = new Vector3(0, 0, 0);
-const ceilingLightRef = ref<THREE.DirectionalLight | null>(null);
+const ceilingTargetPosition = new Vector3(0, 0, 0);
 
 // ------ REFS ------
 
+const ceilingLightRef = ref<THREE.DirectionalLight | null>(null);
+const ceilingHelperRef = ref<THREE.DirectionalLightHelper | null>(null);
+
+const outdoorDirectionalLightRef = ref<THREE.DirectionalLight | null>(null);
+const outdoorHelperRef = ref<THREE.DirectionalLightHelper | null>(null);
 
 // ------ WATCHES, LIFECYCLE ------
 
 let debugLines: THREE.Object3D | null = null
 
+// ------ FIXES RAPIER DISAPPEARING DEBUG LINES
 // Rapier's debug lines are culled by a stale bounding sphere.
+
 onBeforeRender(() => {
   if (debugLines || isLoading.value) return
 
@@ -90,16 +80,15 @@ onBeforeRender(() => {
   })
 })
 
+// ------ ALL PURPOSE TRAVERSAL
+
 watch(
   () => apotekState.value?.scene,
   (scene) => {
     if (!scene) return
 
+    const tempArray: THREE.Mesh[] = []
     scene.traverse((obj) => {
-      // console.log('traversing object:', obj.name)
-
-      // barf all names
-      // console.log('name barf:', obj.name)
 
       // Inspect objects here
 
@@ -119,7 +108,7 @@ watch(
       if (obj.name.startsWith('COL_') && obj instanceof THREE.Mesh) {
         console.log('found collider:', obj.name)
 
-        colliderMeshes.value.push(obj)
+        tempArray.push(obj)
         obj.visible = debugColliders
 
         if (debugColliders) {
@@ -145,9 +134,66 @@ watch(
         }
       }
     })
+
+    colliderMeshes.value = tempArray
   },
   { immediate: true }
 )
+
+/* ------ LECH CONTROLS ------ */
+
+const POS_MAX = 10
+
+// ------ OUTDOOR LIGHT ------
+
+// const lechVariables = useControls({
+//   x: { value: outdoorDirectionalLightPosition.x, min: -30, max: 30 },
+//   y: { value: outdoorDirectionalLightPosition.y, min: -30, max: 30 },
+//   z: { value: outdoorDirectionalLightPosition.z, min: -30, max: 30 },
+
+//   lx: { value: outdoorDirectionalLightLookAt.x, min: -30, max: 30 },
+//   ly: { value: outdoorDirectionalLightLookAt.y, min: -30, max: 30 },
+//   lz: { value: outdoorDirectionalLightLookAt.z, min: -30, max: 30 }
+// })
+
+// watch([lechVariables.x, lechVariables.y, lechVariables.z], ([newX, newY, newZ]) => {
+//   outdoorDirectionalLightPosition.set(newX, newY, newZ)
+//   outdoorDirectionalLightRef.value?.position.set(newX, newY, newZ)
+// })
+
+// watch([lechVariables.lx, lechVariables.ly, lechVariables.lz], ([newLX, newLY, newLZ]) => {
+//   outdoorDirectionalLightLookAt.set(newLX, newLY, newLZ)
+//   outdoorDirectionalLightRef.value?.lookAt(newLX, newLY, newLZ)
+// })
+
+// ------ CEILING LIGHT ------
+
+const lechVariablesCeilingLight = useControls({
+  name: "Ceiling Light",
+
+  x: { value: ceilingLightPosition.x, min: -POS_MAX, max: POS_MAX },
+  y: { value: ceilingLightPosition.y, min: -POS_MAX, max: POS_MAX },
+  z: { value: ceilingLightPosition.z, min: -POS_MAX, max: POS_MAX },
+
+  lx: { value: ceilingTargetPosition.x, min: -POS_MAX, max: POS_MAX },
+  ly: { value: ceilingTargetPosition.y, min: -POS_MAX, max: POS_MAX },
+  lz: { value: ceilingTargetPosition.z, min: -POS_MAX, max: POS_MAX }
+})
+
+watch([lechVariablesCeilingLight.x, lechVariablesCeilingLight.y, lechVariablesCeilingLight.z], ([newX, newY, newZ]) => {
+  ceilingLightPosition.set(newX, newY, newZ)
+  ceilingLightRef.value?.position.set(newX, newY, newZ)
+})
+
+watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariablesCeilingLight.lz], ([newLX, newLY, newLZ]) => {
+  ceilingTargetPosition.set(newLX, newLY, newLZ)
+  const light = ceilingLightRef.value
+  if (!light) return
+
+  light.target.position.set(newLX, newLY, newLZ)
+  light.target.updateMatrixWorld()
+  ceilingHelperRef.value?.update()
+})
 </script>
 
 <template>
@@ -169,8 +215,8 @@ watch(
       /> -->
 
       <primitive
-        v-if="!isLoading"
-        :object="apotekState?.scene"
+        v-if="!isLoading && apotekState?.scene"
+        :object="apotekState.scene"
       />
 
       <RigidBody
@@ -185,31 +231,31 @@ watch(
       <!-- ------ LIGHTS ------ -->
 
       <TresAmbientLight
-        :intensity=".5"
+        :intensity=".2"
         color="white"
       />
 
       <TresDirectionalLight
         ref="outdoorDirectionalLightRef"
         :position="outdoorDirectionalLightPosition"
-        :lookAt="outdoorDirectionalLightLookAt"
         :intensity="3"
       />
 
       <TresDirectionalLightHelper
         v-if="outdoorDirectionalLightRef"
+        ref="outdoorHelperRef"
         :args="[outdoorDirectionalLightRef]"
       />
 
       <TresDirectionalLight
         ref="ceilingLightRef"
         :position="ceilingLightPosition"
-        :lookAt="ceilingLightLookAt"
         :intensity="3"
       />
 
       <TresDirectionalLightHelper
         v-if="ceilingLightRef"
+        ref="ceilingHelperRef"
         :args="[ceilingLightRef]"
       />
 

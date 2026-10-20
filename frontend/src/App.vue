@@ -1,10 +1,3 @@
-<script setup lang="ts">
-import PracticeView from '@/views/PracticeView.vue'
-import ApotekView from '@/views/ApotekView.vue'
-import ThreeView from '@/views/threeview/ThreeView.vue'
-
-</script>
-
 <template>
   <main class="app">
     <nav
