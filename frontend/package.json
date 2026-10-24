@@ -20,6 +20,7 @@
     "@tresjs/post-processing": "latest",
     "@tresjs/rapier": "^1.1.2",
     "lil-gui": "^0.21.0",
+    "suncalc": "^2.1.1",
     "tailwindcss": "^4.3.3",
     "three": "latest",
     "three-stdlib": "latest",

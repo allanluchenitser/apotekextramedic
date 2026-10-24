@@ -15,14 +15,14 @@ defineProps<{
 <div
   class="
     displayCoordinates
-    absolute bottom-0 left-1/2 transform -translate-x-1/2
-    p-2
+    absolute top-0 left-1/2 transform -translate-x-1/2
+    py-1 px-2
     bg-white
     flex
     gap-3
     justify-center
     font-mono
-    text-sm
+    text-xs
   "
 >
   <div v-if="position?.position" class="flex gap-3">

@@ -27,13 +27,19 @@ import { useControls } from '@tresjs/leches';
 import apotekGlbUrl from '@/assets/glb/apotek_elaborate.glb?url'
 
 import WalkThroughController from '@/sharedComponents/WalkthroughController.vue'
+import RealSun from '@/sharedComponents/RealSun.vue'
+
 
 // ------ SETUP ------
+
+const emit = defineEmits<{
+  position: [data: { position: Vector3; rotation: Vector3; lookAt: Vector3 }]
+}>()
 
 const debugColliders = false;
 const colliderMeshes = shallowRef<THREE.Mesh[]>([])
 
-const { scene } = useTresContext()
+const { scene, camera } = useTresContext()
 const { onBeforeRender } = useLoop()
 
 const {
@@ -53,11 +59,37 @@ const ceilingLightRef = ref<THREE.DirectionalLight | null>(null);
 const ceilingHelperRef = ref<THREE.DirectionalLightHelper | null>(null);
 
 const outdoorDirectionalLightRef = ref<THREE.DirectionalLight | null>(null);
-const outdoorHelperRef = ref<THREE.DirectionalLightHelper | null>(null);
 
 // ------ WATCHES, LIFECYCLE ------
 
 let debugLines: THREE.Object3D | null = null
+
+const _pos = new Vector3()
+const _dir = new Vector3()
+const _euler = new THREE.Euler()
+const _quat = new THREE.Quaternion()
+
+// ------ EMIT COORDINATES
+
+onBeforeRender(() => {
+  const cam = camera.activeCamera.value
+  if (!cam) return
+
+  cam.getWorldPosition(_pos)
+  cam.getWorldDirection(_dir)
+  cam.getWorldQuaternion(_quat)
+  _euler.setFromQuaternion(_quat, 'YXZ')
+
+  emit('position', {
+    position: _pos.clone(),
+    rotation: new Vector3(
+      THREE.MathUtils.radToDeg(_euler.x),
+      THREE.MathUtils.radToDeg(_euler.y),
+      THREE.MathUtils.radToDeg(_euler.z)
+    ),
+    lookAt: _pos.clone().add(_dir),
+  })
+})
 
 // ------ FIXES RAPIER DISAPPEARING DEBUG LINES
 // Rapier's debug lines are culled by a stale bounding sphere.
@@ -182,7 +214,12 @@ const lechVariablesCeilingLight = useControls({
 
 watch([lechVariablesCeilingLight.x, lechVariablesCeilingLight.y, lechVariablesCeilingLight.z], ([newX, newY, newZ]) => {
   ceilingLightPosition.set(newX, newY, newZ)
-  ceilingLightRef.value?.position.set(newX, newY, newZ)
+  const light = ceilingLightRef.value
+  if (!light) return
+
+  light.position.set(newX, newY, newZ)
+  light.updateMatrixWorld()
+  ceilingHelperRef.value?.update()
 })
 
 watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariablesCeilingLight.lz], ([newLX, newLY, newLZ]) => {
@@ -230,12 +267,15 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
 
       <!-- ------ LIGHTS ------ -->
 
-      <TresAmbientLight
+      <!-- <TresAmbientLight
         :intensity=".2"
         color="white"
-      />
+      /> -->
 
-      <TresDirectionalLight
+      <!-- <RealSun /> -->
+
+
+      <!-- <TresDirectionalLight
         ref="outdoorDirectionalLightRef"
         :position="outdoorDirectionalLightPosition"
         :intensity="3"
@@ -243,9 +283,8 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
 
       <TresDirectionalLightHelper
         v-if="outdoorDirectionalLightRef"
-        ref="outdoorHelperRef"
         :args="[outdoorDirectionalLightRef]"
-      />
+      /> -->
 
       <TresDirectionalLight
         ref="ceilingLightRef"

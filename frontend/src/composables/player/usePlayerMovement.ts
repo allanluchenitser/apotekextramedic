@@ -41,6 +41,15 @@ export function usePlayerMovement({
   const movement = new Vector3()
   const up = new Vector3(0, 1, 0)
 
+  // Head bobbing parameters and state
+  const BOB_FREQ = .15      // steps per meter travelled (≈ cycles per meter)
+  const BOB_AMP_Y = 0.04    // meters
+  const BOB_AMP_X = 0.02
+  let bobPhase = 0
+  let bobWeight = 0         // 0..1, eases in/out so it settles when stopping
+  let baseCamY: number | null = null
+  let baseCamX = 0
+
   onBeforeStep((dt) => {
     // console.log('before step')
 
@@ -81,9 +90,25 @@ export function usePlayerMovement({
     if (allowVerticalMovement && keys.up) movement.y += 1
     if (allowVerticalMovement && keys.down) movement.y -= 1
 
-    if (movement.lengthSq() === 0) {
-      return
+    const moving = movement.lengthSq() > 0
+
+    const camObj = cameraRef.value
+    if (camObj) {
+      if (baseCamY === null) {
+        baseCamY = camObj.position.y
+        baseCamX = camObj.position.x
+      }
+
+      const targetWeight = moving && !keys.up && !keys.down ? 1 : 0
+      bobWeight += (targetWeight - bobWeight) * Math.min(1, dt * 10)
+
+      if (moving) bobPhase += _speed * dt * BOB_FREQ * Math.PI * 2
+
+      camObj.position.y = baseCamY + Math.sin(bobPhase * 2) * BOB_AMP_Y * bobWeight
+      camObj.position.x = baseCamX + Math.cos(bobPhase) * BOB_AMP_X * bobWeight
     }
+
+    if (!moving) return
 
     // Prevent W+D from being faster than W alone.
     movement.normalize().multiplyScalar(_speed * dt)
