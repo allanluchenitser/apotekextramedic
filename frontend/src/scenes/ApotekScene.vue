@@ -267,7 +267,7 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
 
       <!-- ------ LIGHTS ------ -->
 
-      <!-- <TresAmbientLight
+      <!-- <TressLight
         :intensity=".2"
         color="white"
       /> -->
@@ -286,7 +286,7 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
         :args="[outdoorDirectionalLightRef]"
       /> -->
 
-      <TresDirectionalLight
+      <!-- <TresDirectionalLight
         ref="ceilingLightRef"
         :position="ceilingLightPosition"
         :intensity="3"
@@ -296,7 +296,7 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
         v-if="ceilingLightRef"
         ref="ceilingHelperRef"
         :args="[ceilingLightRef]"
-      />
+      /> -->
 
 
       <!-- ------ ANCILLARY HELPERS ------ -->
