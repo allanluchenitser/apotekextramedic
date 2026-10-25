@@ -7,15 +7,20 @@ import * as SunCalc from 'suncalc'
 import { useControls } from '@tresjs/leches'
 
 // Central Jakarta coordinates
-const LAT = -6.2088
-const LNG = 106.8456
+const LAT = -6.21
+const LNG = 106.05
 
 const DISTANCE = 100
 
 const lechVariables = useControls({
   name: 'Real Sun',
-  longitude: { value: LNG, min: -180, max: 180, step: 0.01 },
-  latitude: { value: LAT, min: -90, max: 90, step: 0.01 },
+
+  // latitude: { value: LAT, min: -90, max: 90, step: 0.01 },
+  latitude: { value: LAT, min: -12, max: 0, step: 0.01 },
+
+  // longitude: { value: LNG, min: -180, max: 180, step: 0.01 },
+  longitude: { value: LNG, min: 102, max: 110, step: 0.01 },
+
   intensity: { value: 2, min: 0, max: 5, step: 0.1 },
 })
 
@@ -29,7 +34,7 @@ const sunHelperRef = ref<THREE.DirectionalLightHelper | null>(null)
 const sunAzimuth = ref(0)
 const arrowPosition = new Vector3(0, 0.02, -0.2);
 const conePosition = new Vector3(0, 0.02, -0.43);
-const compassPosition = new Vector3(0, 0.02, 10);
+const compassPosition = new Vector3(0, 0.02, 0);
 
 function updateSun() {
   console.log('updateSun')
