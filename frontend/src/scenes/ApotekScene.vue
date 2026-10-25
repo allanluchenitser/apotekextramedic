@@ -138,7 +138,7 @@ watch(
       // generate collider meshes array
 
       if (obj.name.startsWith('COL_') && obj instanceof THREE.Mesh) {
-        console.log('found collider:', obj.name)
+        // console.log('found collider:', obj.name)
 
         tempArray.push(obj)
         obj.visible = debugColliders
@@ -200,37 +200,37 @@ const POS_MAX = 10
 
 // ------ CEILING LIGHT ------
 
-const lechVariablesCeilingLight = useControls({
-  name: "Ceiling Light",
+// const lechVariablesCeilingLight = useControls({
+//   name: "Ceiling Light",
 
-  x: { value: ceilingLightPosition.x, min: -POS_MAX, max: POS_MAX },
-  y: { value: ceilingLightPosition.y, min: -POS_MAX, max: POS_MAX },
-  z: { value: ceilingLightPosition.z, min: -POS_MAX, max: POS_MAX },
+//   x: { value: ceilingLightPosition.x, min: -POS_MAX, max: POS_MAX },
+//   y: { value: ceilingLightPosition.y, min: -POS_MAX, max: POS_MAX },
+//   z: { value: ceilingLightPosition.z, min: -POS_MAX, max: POS_MAX },
 
-  lx: { value: ceilingTargetPosition.x, min: -POS_MAX, max: POS_MAX },
-  ly: { value: ceilingTargetPosition.y, min: -POS_MAX, max: POS_MAX },
-  lz: { value: ceilingTargetPosition.z, min: -POS_MAX, max: POS_MAX }
-})
+//   lx: { value: ceilingTargetPosition.x, min: -POS_MAX, max: POS_MAX },
+//   ly: { value: ceilingTargetPosition.y, min: -POS_MAX, max: POS_MAX },
+//   lz: { value: ceilingTargetPosition.z, min: -POS_MAX, max: POS_MAX }
+// })
 
-watch([lechVariablesCeilingLight.x, lechVariablesCeilingLight.y, lechVariablesCeilingLight.z], ([newX, newY, newZ]) => {
-  ceilingLightPosition.set(newX, newY, newZ)
-  const light = ceilingLightRef.value
-  if (!light) return
+// watch([lechVariablesCeilingLight.x, lechVariablesCeilingLight.y, lechVariablesCeilingLight.z], ([newX, newY, newZ]) => {
+//   ceilingLightPosition.set(newX, newY, newZ)
+//   const light = ceilingLightRef.value
+//   if (!light) return
 
-  light.position.set(newX, newY, newZ)
-  light.updateMatrixWorld()
-  ceilingHelperRef.value?.update()
-})
+//   light.position.set(newX, newY, newZ)
+//   light.updateMatrixWorld()
+//   ceilingHelperRef.value?.update()
+// })
 
-watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariablesCeilingLight.lz], ([newLX, newLY, newLZ]) => {
-  ceilingTargetPosition.set(newLX, newLY, newLZ)
-  const light = ceilingLightRef.value
-  if (!light) return
+// watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariablesCeilingLight.lz], ([newLX, newLY, newLZ]) => {
+//   ceilingTargetPosition.set(newLX, newLY, newLZ)
+//   const light = ceilingLightRef.value
+//   if (!light) return
 
-  light.target.position.set(newLX, newLY, newLZ)
-  light.target.updateMatrixWorld()
-  ceilingHelperRef.value?.update()
-})
+//   light.target.position.set(newLX, newLY, newLZ)
+//   light.target.updateMatrixWorld()
+//   ceilingHelperRef.value?.update()
+// })
 </script>
 
 <template>
@@ -267,12 +267,12 @@ watch([lechVariablesCeilingLight.lx, lechVariablesCeilingLight.ly, lechVariables
 
       <!-- ------ LIGHTS ------ -->
 
-      <!-- <TressLight
+      <TresAmbientLight
         :intensity=".2"
         color="white"
-      /> -->
+      />
 
-      <!-- <RealSun /> -->
+      <RealSun />
 
 
       <!-- <TresDirectionalLight
