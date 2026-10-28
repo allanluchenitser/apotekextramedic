@@ -12,7 +12,8 @@ const router = createRouter({
     { path: '/practice', component: () => import('./views/PracticeView.vue') },
     { path: '/three', component: () => import('./views/threeview/ThreeView.vue') },
     { path: '/ortho', component: () => import('./views/orthoview/OrthoView.vue') },
-    { path: '/physics', component: () => import('./views/libraryviews/PhysicsView.vue') }
+    { path: '/physics', component: () => import('./views/libraryviews/PhysicsView.vue') },
+    { path: '/suncalc', component: () => import('./views/suncalcview/SunCalcView.vue') }
   ]
 })
 

@@ -24,7 +24,7 @@
     "tailwindcss": "^4.3.3",
     "three": "latest",
     "three-stdlib": "latest",
-    "vue": "latest",
+    "vue": "3.5.44",
     "vue-router": "^5.3.1"
   },
   "devDependencies": {

@@ -6,25 +6,72 @@ import { Vector3 } from 'three'
 import * as SunCalc from 'suncalc'
 import { useControls } from '@tresjs/leches'
 
-// Central Jakarta coordinates
-const LAT = -6.21
-const LNG = 106.05
+const props = withDefaults(defineProps<{
+  gui?: boolean,
 
-const DISTANCE = 100
+  latitude?: number,
+  longitude?: number,
+  distance?: number,
 
-const lechVariables = useControls({
-  name: 'Real Sun',
+  date?: Date,
 
-  // latitude: { value: LAT, min: -90, max: 90, step: 0.01 },
-  latitude: { value: LAT, min: -12, max: 0, step: 0.01 },
+  intensity?: number,
+}>(), {
+  gui: false, // requires parent to provide treslech
 
-  // longitude: { value: LNG, min: -180, max: 180, step: 0.01 },
-  longitude: { value: LNG, min: 102, max: 110, step: 0.01 },
-
-  intensity: { value: 2, min: 0, max: 5, step: 0.1 },
+  // default is Central Jakarta coordinates
+  latitude: -6.21,
+  longitude: 106.05,
+  distance: 100,
+  intensity: 2,
+  date: () => new Date(),
 })
 
-const sunPosition = ref<Vector3>(new Vector3(0, 100, 0))
+const DISTANCE = props.distance
+
+const dayStart = new Date(props.date)
+dayStart.setHours(0, 0, 0, 0)
+const timeInitMs = dayStart.getTime()
+
+let liveVariables: any;
+
+const options = {
+    name: 'Real Sun',
+
+    latitude: {
+      value: props.latitude,
+      min: -12,
+      max: 0,
+      step: 0.01
+    },
+
+    longitude: {
+      value: props.longitude,
+      min: 102,
+      max: 110,
+      step: 0.01
+    },
+
+    date: {
+      min: 0,
+      max: 1439,
+      step: 10,
+      value: Math.floor((props.date.getTime() - timeInitMs) / 60000)
+    },
+
+    intensity: {
+      value: props.intensity,
+      min: 0,
+      max: 5,
+      step: 0.1
+    },
+}
+
+liveVariables = props.gui
+  ? useControls(options)
+  : options;
+
+const sunPosition = ref<Vector3 | null>(null)
 const sunIntensity = ref(0)
 
 const sunRef = ref<THREE.DirectionalLight | null>(null);
@@ -40,9 +87,9 @@ function updateSun() {
   console.log('updateSun')
 
   const { altitude, azimuth } = SunCalc.getPosition(
-    new Date(),
-    lechVariables.latitude.value,
-    lechVariables.longitude.value
+    new Date(timeInitMs + liveVariables.date.value * 60000),
+    liveVariables.latitude.value,
+    liveVariables.longitude.value
   )
   sunAzimuth.value = azimuth
 
@@ -58,7 +105,7 @@ function updateSun() {
 
   // Disable direct sunlight below the horizon
   sunIntensity.value = altitude > 0
-    ? lechVariables.intensity.value * Math.sin(altitude)
+    ? liveVariables.intensity.value * Math.sin(altitude)
     : 0
 
   const light = sunRef.value
@@ -70,17 +117,23 @@ function updateSun() {
   sunHelperRef.value?.update()
 }
 
-watch([
-  lechVariables.latitude,
-  lechVariables.longitude,
-  lechVariables.intensity,
-], updateSun)
+if (props.gui) {
+  watch([
+    liveVariables.latitude,
+    liveVariables.longitude,
+    liveVariables.date,
+    liveVariables.intensity,
+  ], updateSun)
+}
 
 let timer: ReturnType<typeof setInterval>
 
 onMounted(() => {
   updateSun()
-  timer = setInterval(updateSun, 60_000)
+  timer = setInterval(() => {
+    console.log('Updating sun position')
+    updateSun()
+  }, 60_000)
 })
 
 onUnmounted(() => clearInterval(timer))
@@ -88,6 +141,7 @@ onUnmounted(() => clearInterval(timer))
 
 <template>
   <TresDirectionalLight
+    v-if="sunPosition"
     ref="sunRef"
     :position="sunPosition"
     :intensity="sunIntensity"
@@ -99,23 +153,27 @@ onUnmounted(() => clearInterval(timer))
     :args="[sunRef]"
   />
 
+  <!-- Compass for indicating direction -->
+
   <TresGroup :rotation-y="Math.PI" :position="compassPosition">
-    <!-- Ring lies flat on the XZ ground plane. -->
+
+    <!-- Ring -->
     <TresMesh :rotation-x="Math.PI / 2">
       <TresTorusGeometry :args="[0.5, 0.01, 8, 48]" />
       <TresMeshBasicMaterial color="#ffffff" />
     </TresMesh>
 
-    <!-- Arrow shaft points along local -Z. -->
+    <!-- Arrow -->
     <TresMesh :position="arrowPosition" :rotation-x="Math.PI / 2">
       <TresCylinderGeometry :args="[0.012, 0.012, 0.4, 8]" />
       <TresMeshBasicMaterial color="#ff9f1c" />
     </TresMesh>
 
-    <!-- Cone's tip points along local -Z. -->
+    <!-- Cone -->
     <TresMesh :position="conePosition" :rotation-x="-Math.PI / 2">
       <TresConeGeometry :args="[0.06, 0.16, 4]" />
       <TresMeshBasicMaterial color="#ff9f1c" />
     </TresMesh>
+
   </TresGroup>
 </template>

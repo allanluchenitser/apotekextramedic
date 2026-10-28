@@ -272,7 +272,11 @@ const POS_MAX = 10
         color="white"
       />
 
-      <RealSun />
+      <RealSun
+        gui
+        :latitude="-6.21"
+        :longitude="106.05"
+      />
 
 
       <!-- <TresDirectionalLight
