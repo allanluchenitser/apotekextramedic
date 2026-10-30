@@ -135,7 +135,7 @@ watch(
         // )
       // }
 
-      // generate collider meshes array
+      // --- COLLIDERS
 
       if (obj.name.startsWith('COL_') && obj instanceof THREE.Mesh) {
         // console.log('found collider:', obj.name)
@@ -267,15 +267,12 @@ const POS_MAX = 10
 
       <!-- ------ LIGHTS ------ -->
 
-      <TresAmbientLight
-        :intensity=".2"
-        color="white"
-      />
+      <TresHemisphereLight :args="['#d1edff', '#8a8272', 0.6]" />
 
       <RealSun
         gui
         :latitude="-6.21"
-        :longitude="106.05"
+        :longitude="106.65"
       />
 
 

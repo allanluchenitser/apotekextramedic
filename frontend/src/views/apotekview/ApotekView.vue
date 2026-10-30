@@ -29,6 +29,7 @@ const positionData = ref({
         <TresLeches />
         <TresCanvas
           alpha
+          shadows
           :clear-alpha="0"
           :dpr="dpr"
         >

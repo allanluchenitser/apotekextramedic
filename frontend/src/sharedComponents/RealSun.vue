@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import * as THREE from 'three'
 import { ref, watch, onMounted, onUnmounted } from 'vue'
@@ -21,8 +20,8 @@ const props = withDefaults(defineProps<{
 
   // default is Central Jakarta coordinates
   latitude: -6.21,
-  longitude: 106.05,
-  distance: 100,
+  longitude: 106.85,
+  distance: 50,
   intensity: 2,
   date: () => new Date(),
 })
@@ -38,6 +37,13 @@ let liveVariables: any;
 const options = {
     name: 'Real Sun',
 
+    date: {
+      min: 0,
+      max: 1439,
+      step: 1,
+      value: Math.floor((props.date.getTime() - timeInitMs) / 60000)
+    },
+
     latitude: {
       value: props.latitude,
       min: -12,
@@ -50,13 +56,6 @@ const options = {
       min: 102,
       max: 110,
       step: 0.01
-    },
-
-    date: {
-      min: 0,
-      max: 1439,
-      step: 10,
-      value: Math.floor((props.date.getTime() - timeInitMs) / 60000)
     },
 
     intensity: {
@@ -78,10 +77,9 @@ const sunRef = ref<THREE.DirectionalLight | null>(null);
 const sunHelperRef = ref<THREE.DirectionalLightHelper | null>(null)
 
 // compass
-const sunAzimuth = ref(0)
 const arrowPosition = new Vector3(0, 0.02, -0.2);
 const conePosition = new Vector3(0, 0.02, -0.43);
-const compassPosition = new Vector3(0, 0.02, 0);
+const compassPosition = new Vector3(0, 0.02, 10);
 
 function updateSun() {
   console.log('updateSun')
@@ -91,21 +89,22 @@ function updateSun() {
     liveVariables.latitude.value,
     liveVariables.longitude.value
   )
-  sunAzimuth.value = azimuth
 
-  // World coordinates:
-  // +X = East, +Y = Up, +Z = North
+  const alt = THREE.MathUtils.degToRad(altitude)
+  const az = THREE.MathUtils.degToRad(azimuth)
+
+  // +X = East, +Y = Up, -Z = North (right-handed); azimuth is clockwise from north
   const nextPosition = new Vector3(
-    -DISTANCE * Math.cos(altitude) * Math.sin(azimuth),
-    DISTANCE * Math.sin(altitude),
-    -DISTANCE * Math.cos(altitude) * Math.cos(azimuth)
+    DISTANCE * Math.cos(alt) * Math.sin(az),
+    DISTANCE * Math.sin(alt),
+    -DISTANCE * Math.cos(alt) * Math.cos(az)
   )
 
-  sunPosition.value = nextPosition;
+  sunPosition.value = nextPosition
 
   // Disable direct sunlight below the horizon
   sunIntensity.value = altitude > 0
-    ? liveVariables.intensity.value * Math.sin(altitude)
+    ? liveVariables.intensity.value * Math.min(1, altitude / 10)
     : 0
 
   const light = sunRef.value
@@ -143,6 +142,7 @@ onUnmounted(() => clearInterval(timer))
   <TresDirectionalLight
     v-if="sunPosition"
     ref="sunRef"
+    cast-shadow
     :position="sunPosition"
     :intensity="sunIntensity"
   />
@@ -155,22 +155,30 @@ onUnmounted(() => clearInterval(timer))
 
   <!-- Compass for indicating direction -->
 
-  <TresGroup :rotation-y="Math.PI" :position="compassPosition">
+  <TresGroup :position="compassPosition">
 
     <!-- Ring -->
-    <TresMesh :rotation-x="Math.PI / 2">
+    <TresMesh
+      :rotation-x="Math.PI / 2"
+    >
       <TresTorusGeometry :args="[0.5, 0.01, 8, 48]" />
       <TresMeshBasicMaterial color="#ffffff" />
     </TresMesh>
 
     <!-- Arrow -->
-    <TresMesh :position="arrowPosition" :rotation-x="Math.PI / 2">
+    <TresMesh
+      :position="arrowPosition"
+      :rotation-x="Math.PI / 2"
+    >
       <TresCylinderGeometry :args="[0.012, 0.012, 0.4, 8]" />
       <TresMeshBasicMaterial color="#ff9f1c" />
     </TresMesh>
 
     <!-- Cone -->
-    <TresMesh :position="conePosition" :rotation-x="-Math.PI / 2">
+    <TresMesh
+      :position="conePosition"
+      :rotation-x="-Math.PI / 2"
+    >
       <TresConeGeometry :args="[0.06, 0.16, 4]" />
       <TresMeshBasicMaterial color="#ff9f1c" />
     </TresMesh>
